@@ -1,0 +1,59 @@
+[user]
+    name = Nuno Mariz
+    email =
+
+[core]
+    editor = vim
+
+[alias]
+    st = status -u
+    sti = status -u --ignore-submodules
+    co = checkout
+    br = branch
+    up = rebase
+    ci = commit
+    undo = reset --soft HEAD~1
+    lol = log --graph --decorate --pretty=oneline --abbrev-commit
+    lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset %Cblue<%ce>%Creset'
+    lga = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset %Cblue<%ce>%Creset' --all
+    # Show files ignored by git:
+    ign = ls-files --other --ignored --exclude-standard
+
+[web]
+    browser = google-chrome
+
+[color]
+    ui = auto
+
+[color "branch"]
+    current = yellow bold
+    local = green bold
+    remote = cyan bold
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+    whitespace = red reverse
+
+[color "status"]
+    added = green bold
+    changed = yellow bold
+    untracked = red bold
+
+[commit]
+    template = ~/.gitmessage
+
+[push]
+    default = current
+
+[merge]
+	tool = diffmerge
+
+[diff]
+	tool = opendiff
+
+[difftool]
+	prompt = false

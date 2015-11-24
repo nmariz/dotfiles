@@ -1,0 +1,343 @@
+" This must be first, because it changes other options as side effect
+set nocompatible
+
+" Set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" Let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+Plugin 'msanders/snipmate.vim'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'scrooloose/nerdtree'
+Plugin 'majutsushi/tagbar'
+Plugin 'ervandew/supertab'
+Plugin 'tpope/vim-surround'
+Plugin 'rstacruz/sparkup'
+Plugin 'nathanaelkane/vim-indent-guides'
+Plugin 'Rykka/riv.vim'
+Plugin 'tpope/vim-markdown'
+Plugin 'pangloss/vim-javascript'
+Plugin 'othree/html5.vim'
+Plugin 'lepture/vim-css'
+Plugin 'cwood/vim-django'
+Plugin 'jmcantrell/vim-virtualenv'
+Plugin 'fs111/pydoc.vim'
+Plugin 'jistr/vim-nerdtree-tabs'
+Plugin 'kien/ctrlp.vim'
+Plugin 'davidhalter/jedi-vim'
+Plugin 'scrooloose/syntastic'
+Plugin 'bling/vim-airline'
+Plugin 'geoffharcourt/one-dark.vim'
+Plugin 'vim-scripts/xoria256.vim'
+
+" All of your Plugins must be added before the following line
+" To install the plugins, launch vim and run :PluginInstall
+" Or from command line: vim +PluginInstall +qall
+call vundle#end()
+
+" Enable filetype dectection and ft specific plugin/indent
+filetype plugin indent on
+
+" Enable syntax hightlight
+syntax on
+
+" Editor settings
+set confirm " prompt when existing from an unsaved file
+set history=700
+set undolevels=700
+set backspace=indent,eol,start " more powerful backspacing
+set encoding=utf-8 " set the default file encoding to UTF-8:
+
+" Automatic reloading of .vimrc
+autocmd! bufwritepost .vimrc source %
+
+" Better copy & paste
+" When you want to paste large blocks of code into vim, press F2 before you
+" paste. At the bottom you should see ``-- INSERT (paste) --``.
+set pastetoggle=<F2>
+set clipboard=unnamed
+
+" Mouse and backspace
+set mouse=a  " on OSX press ALT and click
+set bs=2     " make backspace behave like normal again
+
+" Rebind <Leader> key
+" I like to have it here becuase it is easier to reach than the default and
+" it is next to ``m`` and ``n`` which I use for navigating between tabs.
+let mapleader = ","
+
+" Status line configuration
+function! FileSize()
+    let bytes = getfsize(expand("%:p"))
+    if bytes <= 0
+        return ""
+    endif
+    if bytes < 1024
+        return bytes . "b"
+    else
+        return (bytes / 1024) . "k"
+    endif
+endfunction
+
+" Display settings
+set textwidth=79 " text width
+set mouse=a " use mouse in all modes
+set report=0 " always report number of lines changed "
+set wrap " wrap lines
+set scrolloff=2 " 2 lines above/below cursor when scrolling
+set number " show line numbers
+set cursorline " highlight current line
+set showmatch " show matching bracket (briefly jump)
+set showcmd " show typed command in status bar
+set title " show file in titlebar
+set laststatus=2 " use 2 lines for the status bar
+set matchtime=2 " show matching bracket for 0.2 seconds
+set matchpairs+=<:> " specially for html
+set wildignore=*.o,*.class,*.so*,*.swp,*.pyc,*.pyo,core
+set hlsearch " highlight search matches
+set incsearch
+set smartcase
+set splitbelow " set the preview window in the bottom
+
+" Folding settings
+set foldmethod=indent "fold based on indent
+set foldnestmax=10 "deepest fold is 10 levels
+set nofoldenable "dont fold by default
+set foldlevel=1 "this is just what i use
+
+" Real programmers don't use TABs but spaces
+set autoindent
+set smartindent
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set shiftround
+set expandtab
+
+" Make search case insensitive
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+
+" Disable stupid backup and swap files - they trigger too many events
+" for file system watchers
+set nobackup
+set nowritebackup
+set noswapfile
+
+autocmd FileType python,perl,php,c,cpp,cs,java     setlocal ai et sta sw=4 sts=4
+autocmd FileType ruby                              setlocal ai et sta sw=2 sts=2
+autocmd FileType javascript,coffee                 setlocal ai et sta sw=4 sts=4
+autocmd FileType sass,scss,css                     setlocal ai et sta sw=2 sts=2
+autocmd FileType html,xhtml,htmldjango,haml,wml,cf setlocal ai et sta sw=2 sts=2
+autocmd FileType xml,xsd,xslt                      setlocal ai et sta sw=2 sts=2
+
+" Settings for Django
+let g:django_projects = '~/tmp' " Sets all projects under project
+let g:django_project_container = 'source' " Inside of these folders look for source
+let g:django_activate_virtualenv = 1 " Try to activate the associated virtualenv
+let g:django_activate_nerdtree = 1 " Try to open nerdtree at the project root.
+
+" js
+let g:html_indent_inctags = "html,body,head,tbody"
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1 = "inc"
+
+" Settings for NERDTree
+let NERDChristmasTree=0
+let NERDTreeWinSize=30
+let NERDTreeChDirMode=2
+let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$', '\.swp$']
+let NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$', '\~$']
+let NERDTreeShowBookmarks=1
+let NERDTreeWinPos = "left"
+
+" Settings for NERDCommenter
+let g:NERDSpaceDelims = 1 " adds a space after comment char(s)
+
+" NERDTreeTabs on console vim startup
+let g:nerdtree_tabs_open_on_console_startup=0
+let g:nerdtree_tabs_open_on_gui_startup=0
+
+" Settings for Jedi
+let g:jedi#use_splits_not_buffers = "left"
+let g:jedi#show_call_signatures = "1"
+let g:jedi#popup_select_first = 1
+let g:jedi#goto_command = "<leader>d"
+let g:jedi#goto_assignments_command = "<leader>g"
+let g:jedi#goto_definitions_command = ""
+let g:jedi#documentation_command = "K"
+let g:jedi#usages_command = "<leader>n"
+let g:jedi#completions_command = "<C-Space>"
+let g:jedi#rename_command = "<leader>r"
+
+" Settings for Syntastic
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_python_checkers=['pep8']
+
+" Settings for ctrlp.vim
+let g:ctrlp_max_height = 25
+set wildignore+=*.pyc
+set wildignore+=*_build/*
+set wildignore+=*/coverage/*
+
+" Settings for vim-powerline
+" set laststatus=2
+
+" Settings for vim-airline
+set laststatus=2
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#right_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = ' '
+let g:airline#extensions#tabline#right_alt_sep = ' '
+
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+
+" Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+" autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType c setlocal omnifunc=ccomplete#Complete
+
+" Python folding
+" mkdir -p ~/.vim/ftplugin
+" wget -O ~/.vim/ftplugin/python_editing.vim http://www.vim.org/scripts/download_script.php?src_id=5492
+set nofoldenable
+
+" Settings for vim-django
+if !has("python")
+    call add(g:pathogen_disabled, 'vim-django')
+endif
+
+" Keybindings for plugin toggle
+nmap <F6> :NERDTreeToggle<cr>
+nmap <F7> :IndentGuidesToggle<cr>
+nmap <F8> :TagbarToggle<CR>
+let g:tagbar_ctags_bin='~/bin/ctags'
+
+" Bash-like home/end key mappings
+nmap <C-A> <Home>
+nmap <C-E> <End>
+imap <C-A> <Home>
+imap <C-E> <End>
+vmap <C-A> <Home>
+vmap <C-E> <End>
+
+" Bind Ctrl+<movement> keys to move around the windows, instead of using
+" Ctrl+w + <movement>
+map <c-j> <c-w>j
+map <c-k> <c-w>k
+map <c-l> <c-w>l
+map <c-h> <c-w>h
+
+" Easier moving between tabs
+map <Leader>n <esc>:tabprevious<CR>
+map <Leader>m <esc>:tabnext<CR>
+nnoremap <A-1> 1gt
+nnoremap <A-2> 2gt
+nnoremap <A-3> 3gt
+nnoremap <A-4> 4gt
+nnoremap <A-5> 5gt
+nnoremap <A-6> 6gt
+nnoremap <A-7> 7gt
+nnoremap <A-8> 8gt
+nnoremap <A-9> 9gt
+nnoremap <A-0> 10gt
+
+" Map sort function to a key
+vnoremap <Leader>s :sort<CR>
+
+" easier moving of code blocks
+" Try to go into visual mode (v), thenselect several lines of code here and
+" then press ``>`` several times.
+vnoremap < <gv  " better indentation
+vnoremap > >gv  " better indentation
+
+" ExtraWhitespace
+if has("autocmd")
+    highlight ExtraWhitespace ctermbg=red guibg=red
+    autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+    match ExtraWhitespace /\s\+$\| \+\ze\t/
+
+    function! s:FixWhitespace(line1,line2)
+        let l:save_cursor = getpos(".")
+        silent! execute ':' . a:line1 . ',' . a:line2 . 's/\s\+$//'
+        call setpos('.', l:save_cursor)
+    endfunction
+
+    " Run :FixWhitespace to remove end of line white space.
+    command! -range=% FixWhitespace call <SID>FixWhitespace(<line1>,<line2>)
+endif
+
+" Theme/Colors
+set t_Co=256 " terminal has 256 colors
+colorscheme onedark
+" colorscheme xoria256
+set colorcolumn=+1
+hi ColorColumn ctermbg=233 guibg=#121212
+execute "set colorcolumn=" . join(range(80,335), ',')
+
+
+" Experiments
+
+" This line will make Vim set out tab characters, trailing whitespace and
+" invisible spaces visually, and additionally use the # sign at the end of
+" lines to mark lines that extend off-screen. For more info, see :h listchars.
+" set listchars=tab:▸\ ,eol:¬,trail:▫,extends:#,nbsp:▫
+" set list
+" syn region pythonDocstring  start=+^\s*[uU]\?[rR]\?"""+ end=+"""+ keepend excludenl contains=pythonEscape,@Spell,pythonDoctest,pythonDocTest2,pythonSpaceError
+" syn region pythonDocstring  start=+^\s*[uU]\?[rR]\?'''+ end=+'''+ keepend excludenl contains=pythonEscape,@Spell,pythonDoctest,pythonDocTest2,pythonSpaceError
+
+" hi def link pythonDocstring pythonComment
+
+
+
+
+" Indent Python in the Google way.
+
+setlocal indentexpr=GetGooglePythonIndent(v:lnum)
+
+let s:maxoff = 50 " maximum number of lines to look backwards.
+
+function GetGooglePythonIndent(lnum)
+
+  " Indent inside parens.
+  " Align with the open paren unless it is at the end of the line.
+  " E.g.
+  "   open_paren_not_at_EOL(100,
+  "                         (200,
+  "                          300),
+  "                         400)
+  "   open_paren_at_EOL(
+  "       100, 200, 300, 400)
+  call cursor(a:lnum, 1)
+  let [par_line, par_col] = searchpairpos('(\|{\|\[', '', ')\|}\|\]', 'bW',
+        \ "line('.') < " . (a:lnum - s:maxoff) . " ? dummy :"
+        \ . " synIDattr(synID(line('.'), col('.'), 1), 'name')"
+        \ . " =~ '\\(Comment\\|String\\)$'")
+  if par_line > 0
+    call cursor(par_line, 1)
+    if par_col != col("$") - 1
+      return par_col
+    endif
+  endif
+
+  " Delegate the rest to the original function.
+  return GetPythonIndent(a:lnum)
+
+endfunction
+
+let pyindent_nested_paren="&sw*2"
+let pyindent_open_paren="&sw*2"

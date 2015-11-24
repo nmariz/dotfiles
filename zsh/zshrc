@@ -1,0 +1,55 @@
+# Path to your oh-my-zsh configuration.
+export ZSH=$HOME/.oh-my-zsh
+
+# Set name of the theme to load.
+# Look in ~/.oh-my-zsh/themes/
+# Optionally, if you set this to "random", it'll load a random theme each
+# time that oh-my-zsh is loaded.
+export ZSH_THEME="nmariz"
+
+# Set to this to use case-sensitive completion
+# export CASE_SENSITIVE="true"
+
+# Comment this out to disable weekly auto-update checks
+# export DISABLE_AUTO_UPDATE="true"
+
+# Uncomment following line if you want to disable colors in ls
+# export DISABLE_LS_COLORS="true"
+
+# Uncomment following line if you want to disable autosetting terminal title.
+# export DISABLE_AUTO_TITLE="true"
+
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+# Example format: plugins=(rails git textmate ruby lighthouse)
+plugins=(git)
+
+source $ZSH/oh-my-zsh.sh
+
+# Customize $PATH
+export PATH=$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:/opt/local/bin:$PATH
+
+# Editor
+export EDITOR=/usr/local/bin/vim
+
+# Aliases
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+alias ll='ls -lha'
+alias restart_force_check='sudo touch /forcefsck && sudo reboot'
+manage() { python manage.py $* --settings=settings_debug; }
+
+# Pyenv
+eval "$(pyenv init -)"
+
+# LANG
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+# FLAGS
+export MACOSX_DEPLOYMENT_TARGET=10.11
+export ARCHFLAGS="-arch x86_64"
+export CFLAGS="-Os -arch x86_64"
+export PG_CPPFLAGS="-arch x86_64"
+export SHLIB_LINK="-arch x86_64"
+export LDFLAGS="-arch x86_64"
