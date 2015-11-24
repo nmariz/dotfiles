@@ -50,10 +50,10 @@
     default = current
 
 [merge]
-	tool = diffmerge
+    tool = diffmerge
 
 [diff]
-	tool = opendiff
+    tool = opendiff
 
 [difftool]
-	prompt = false
+    prompt = false

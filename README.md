@@ -9,7 +9,7 @@
 
 ## Installation
 
-*** !!! Make sure you backup your stuff first !!! ***
+**!!! Make sure you backup your stuff first !!!**
 
 Install all:
 
