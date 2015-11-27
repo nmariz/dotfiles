@@ -8,6 +8,7 @@ call vundle#begin()
 " Let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
+" Plugins
 Plugin 'msanders/snipmate.vim'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/nerdtree'
@@ -82,10 +83,12 @@ function! FileSize()
 endfunction
 
 " Display settings
-set textwidth=79 " text width
+set textwidth=0 " text width
 set mouse=a " use mouse in all modes
-set report=0 " always report number of lines changed "
+set report=0 " always report number of lines changed
 set wrap " wrap lines
+set linebreak " don't break words
+set nolist  " list disables linebreak
 set scrolloff=2 " 2 lines above/below cursor when scrolling
 set number " show line numbers
 set cursorline " highlight current line
@@ -141,7 +144,6 @@ let g:django_project_container = 'source' " Inside of these folders look for sou
 let g:django_activate_virtualenv = 1 " Try to activate the associated virtualenv
 let g:django_activate_nerdtree = 1 " Try to open nerdtree at the project root.
 
-" js
 let g:html_indent_inctags = "html,body,head,tbody"
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
@@ -188,9 +190,6 @@ set wildignore+=*.pyc
 set wildignore+=*_build/*
 set wildignore+=*/coverage/*
 
-" Settings for vim-powerline
-" set laststatus=2
-
 " Settings for vim-airline
 set laststatus=2
 let g:airline#extensions#tabline#enabled = 1
@@ -198,7 +197,6 @@ let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#right_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = ' '
 let g:airline#extensions#tabline#right_alt_sep = ' '
-
 let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
 let g:airline_right_sep = ''
@@ -225,6 +223,8 @@ endif
 nmap <F6> :NERDTreeToggle<cr>
 nmap <F7> :IndentGuidesToggle<cr>
 nmap <F8> :TagbarToggle<CR>
+
+" Exuberant Ctags path
 let g:tagbar_ctags_bin='~/bin/ctags'
 
 " Bash-like home/end key mappings
@@ -259,7 +259,7 @@ nnoremap <A-0> 10gt
 " Map sort function to a key
 vnoremap <Leader>s :sort<CR>
 
-" easier moving of code blocks
+" Easier moving of code blocks
 " Try to go into visual mode (v), thenselect several lines of code here and
 " then press ``>`` several times.
 vnoremap < <gv  " better indentation
@@ -281,19 +281,7 @@ if has("autocmd")
     command! -range=% FixWhitespace call <SID>FixWhitespace(<line1>,<line2>)
 endif
 
-" Theme/Colors
-set t_Co=256 " terminal has 256 colors
-colorscheme onedark
-" colorscheme xoria256
-set colorcolumn=+1
-hi ColorColumn ctermbg=233 guibg=#121212
-execute "set colorcolumn=" . join(range(80,335), ',')
-
-
-" Experiments ----------------------------------------------------------------
-
 " Indent Python in the Google way.
-
 setlocal indentexpr=GetGooglePythonIndent(v:lnum)
 
 let s:maxoff = 50 " maximum number of lines to look backwards.
@@ -328,3 +316,13 @@ endfunction
 
 let pyindent_nested_paren="&sw*2"
 let pyindent_open_paren="&sw*2"
+
+" Theme/Colors
+set t_Co=256 " terminal has 256 colors
+colorscheme onedark
+" colorscheme xoria256
+
+" Set ColorColumn
+set colorcolumn=+1
+hi ColorColumn ctermbg=233 guibg=#121212
+execute "set colorcolumn=" . join(range(80,335), ',')

@@ -29,7 +29,7 @@ source $ZSH/oh-my-zsh.sh
 export PATH=$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:/opt/local/bin:$PATH
 
 # Editor
-export EDITOR=/usr/local/bin/vim
+export EDITOR=vim
 
 # Aliases
 alias rm='rm -i'
@@ -40,7 +40,13 @@ alias restart_force_check='sudo touch /forcefsck && sudo reboot'
 manage() { python manage.py $* --settings=settings_debug; }
 
 # Pyenv
-eval "$(pyenv init -)"
+if [ -x "$(command -v pyenv)" ]; then
+    export PATH="$HOME/.pyenv/bin:$PATH"
+    eval "$(pyenv init -)"
+fi
+
+# Disable auto title in Tmuxinator
+export DISABLE_AUTO_TITLE=true
 
 # LANG
 export LANG=en_US.UTF-8
