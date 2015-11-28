@@ -33,6 +33,7 @@ Plugin 'geoffharcourt/one-dark.vim'
 Plugin 'vim-scripts/xoria256.vim'
 Plugin 'hail2u/vim-css3-syntax'
 Plugin 'tpope/vim-fugitive'
+Plugin 'ntpeters/vim-better-whitespace'
 
 " All of your Plugins must be added before the following line
 " To install the plugins, launch vim and run :PluginInstall
@@ -47,8 +48,11 @@ syntax on
 
 " Editor settings
 set confirm " prompt when existing from an unsaved file
-set history=700
-set undolevels=700
+set hidden " allow hiding buffers instead of closing them
+set wildmenu " Better command-line completion
+set autoread " Automatically read a file that has changed on disk
+set history=1000
+set undolevels=1000
 set backspace=indent,eol,start " more powerful backspacing
 set encoding=utf-8 " set the default file encoding to UTF-8:
 
@@ -101,8 +105,9 @@ set matchtime=2 " show matching bracket for 0.2 seconds
 set matchpairs+=<:> " specially for html
 set wildignore=*.o,*.class,*.so*,*.swp,*.pyc,*.pyo,core
 set hlsearch " highlight search matches
-set incsearch
-set smartcase
+set incsearch " show search matches as you type
+set ignorecase " ignore case when searching
+set smartcase " ignore case if search pattern is all lowercase, case-sensitive otherwise
 set splitbelow " set the preview window in the bottom
 
 " Folding settings
@@ -120,14 +125,7 @@ set shiftwidth=4
 set shiftround
 set expandtab
 
-" Make search case insensitive
-set hlsearch
-set incsearch
-set ignorecase
-set smartcase
-
-" Disable stupid backup and swap files - they trigger too many events
-" for file system watchers
+" No backup files
 set nobackup
 set nowritebackup
 set noswapfile
@@ -272,22 +270,6 @@ vnoremap <Leader>s :sort<CR>
 vnoremap < <gv  " better indentation
 vnoremap > >gv  " better indentation
 
-" ExtraWhitespace
-if has("autocmd")
-    highlight ExtraWhitespace ctermbg=red guibg=red
-    autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
-    match ExtraWhitespace /\s\+$\| \+\ze\t/
-
-    function! s:FixWhitespace(line1,line2)
-        let l:save_cursor = getpos(".")
-        silent! execute ':' . a:line1 . ',' . a:line2 . 's/\s\+$//'
-        call setpos('.', l:save_cursor)
-    endfunction
-
-    " Run :FixWhitespace to remove end of line white space.
-    command! -range=% FixWhitespace call <SID>FixWhitespace(<line1>,<line2>)
-endif
-
 " Indent Python in the Google way.
 setlocal indentexpr=GetGooglePythonIndent(v:lnum)
 
@@ -327,14 +309,12 @@ let pyindent_open_paren="&sw*2"
 " Theme/Colors
 set t_Co=256 " terminal has 256 colors
 colorscheme onedark
-" colorscheme xoria256
 
 " Set ColorColumn
-" highlight OverLength ctermbg=red ctermfg=white guibg=red guifg=white
-highlight OverLength ctermfg=red guifg=red
-match OverLength /\%80v.\+/
+highlight ColorColumn ctermbg=magenta ctermfg=white guibg=magenta guifg=white
+call matchadd('ColorColumn', '\%80v', 100)
 
-" Graphical options
+ " Graphical options
 if has("gui_running")
     set guifont=Source\ Code\ Pro\ for\ Powerline:h13
 
