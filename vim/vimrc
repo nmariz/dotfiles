@@ -21,7 +21,6 @@ Plugin 'Rykka/riv.vim'
 Plugin 'tpope/vim-markdown'
 Plugin 'pangloss/vim-javascript'
 Plugin 'othree/html5.vim'
-Plugin 'lepture/vim-css'
 Plugin 'cwood/vim-django'
 Plugin 'jmcantrell/vim-virtualenv'
 Plugin 'fs111/pydoc.vim'
@@ -32,6 +31,8 @@ Plugin 'scrooloose/syntastic'
 Plugin 'bling/vim-airline'
 Plugin 'geoffharcourt/one-dark.vim'
 Plugin 'vim-scripts/xoria256.vim'
+Plugin 'hail2u/vim-css3-syntax'
+Plugin 'tpope/vim-fugitive'
 
 " All of your Plugins must be added before the following line
 " To install the plugins, launch vim and run :PluginInstall
@@ -196,13 +197,19 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#right_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = ' '
-let g:airline#extensions#tabline#right_alt_sep = ' '
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
+let g:airline_powerline_fonts = 1
+" let g:airline_left_sep = ''
+" let g:airline_left_alt_sep = ''
+" let g:airline_right_sep = ''
+" let g:airline_right_alt_sep = ''
+
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+    let g:airline_symbols.space = "\ua0"
+endif
 
 " Enable omni completion.
+" Use ctrl-x ctrl-o to get the popup
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
@@ -323,6 +330,19 @@ colorscheme onedark
 " colorscheme xoria256
 
 " Set ColorColumn
-set colorcolumn=+1
-hi ColorColumn ctermbg=233 guibg=#121212
-execute "set colorcolumn=" . join(range(80,335), ',')
+" highlight OverLength ctermbg=red ctermfg=white guibg=red guifg=white
+highlight OverLength ctermfg=red guifg=red
+match OverLength /\%80v.\+/
+
+" Graphical options
+if has("gui_running")
+    set guifont=Source\ Code\ Pro\ for\ Powerline:h13
+
+    " Remove toolbar, scrollbars, etc.
+    set guioptions-=T
+    set guioptions-=r
+    set guioptions-=l
+    set guioptions-=L
+    set guioptions-=R
+    set guioptions-=m
+endif

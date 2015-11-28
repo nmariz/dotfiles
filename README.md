@@ -22,3 +22,7 @@ Or individually:
 Usage:
 
     $ make help
+
+**Note:** To install the Vim plugins you need to run:
+
+    $ vim +PluginInstall +qall
