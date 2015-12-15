@@ -12,6 +12,7 @@
     br = branch
     up = rebase
     ci = commit
+    df = difftool
     undo = reset --soft HEAD~1
     lol = log --graph --decorate --pretty=oneline --abbrev-commit
     lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
@@ -50,10 +51,10 @@
     default = current
 
 [merge]
-    tool = diffmerge
+    tool = vimdiff
 
 [diff]
-    tool = opendiff
+    tool = vimdiff
 
 [difftool]
     prompt = false
