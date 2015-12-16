@@ -52,8 +52,8 @@ install_vim: clean_vim
 	vim +PluginInstall +qall
 
 clean_vim:
-	rm -rf ~/.vimrc
-	rm -rf ~/.vim
+	rm -rf ${TARGET}/.vimrc
+	rm -rf ${TARGET}/.vim
 
 install_tmux: clean_tmux
 	ln -sf ${DOTFILES}/tmux/tmux.conf ~/.tmux.conf
@@ -66,9 +66,9 @@ install_git: clean_git
 	ln -sf ${DOTFILES}/git/gitmessage ~/.gitmessage
 	@echo "\nGit config settings"
 	@read -p "user.name: " git_name; \
-	sed -i -e "s/%%GITNAME%%/$$git_name/" ${TARGET}/.gitconfig
+	sed -i "" -e "s/%%GITNAME%%/$$git_name/" ${TARGET}/.gitconfig
 	@read -p "user.email: " git_email; \
-	sed -i -e "s/%%GITEMAIL%%/$$git_email/" ${TARGET}/.gitconfig
+	sed -i "" -e "s/%%GITEMAIL%%/$$git_email/" ${TARGET}/.gitconfig
 
 clean_git:
 	rm -rf ${TARGET}/.gitconfig
