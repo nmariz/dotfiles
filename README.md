@@ -6,12 +6,11 @@
 * [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh) should be installed
 * [Vim](http://www.vim.org/) (v7.4 or more recent) should be installed
 * `git` should be installed
+* [Powerline Fonts](https://github.com/powerline/fonts/) should be installed
 
 ## Installation
 
 **!!! Make sure you backup your stuff first !!!**
-
-Install [Powerline Fonts](https://github.com/powerline/fonts/).
 
 Install all:
 
@@ -24,7 +23,3 @@ Or individually:
 Usage:
 
     $ make help
-
-**Note:** To install the Vim plugins you need to run:
-
-    $ vim +PluginInstall +qall
