@@ -11,6 +11,8 @@
 
 **!!! Make sure you backup your stuff first !!!**
 
+Install [Powerline Fonts](https://github.com/powerline/fonts/).
+
 Install all:
 
     $ make all

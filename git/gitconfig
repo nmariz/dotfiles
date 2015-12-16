@@ -1,6 +1,6 @@
 [user]
-    name = Nuno Mariz
-    email =
+    name = %%GITNAME%%
+    email = %%GITEMAIL%%
 
 [core]
     editor = vim

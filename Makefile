@@ -44,11 +44,12 @@ clean_zsh:
 	rm -rf ${TARGET}/.oh-my-zsh/custom/nmariz.zsh-theme
 
 install_vim: clean_vim
-	@echo "Installing vundle for vim"
+	@echo "Installing Vundle for Vim..."
 	mkdir -p ${TARGET}/.vim/bundle
 	[ -d ${VUNDLE} ] || git clone "https://github.com/gmarik/Vundle.vim.git" ${VUNDLE}
 	ln -s ${DOTFILES}/vim/vimrc ${TARGET}/.vimrc
-	@echo "NOTE: Don't forget to install the plugins from command line: vim +PluginInstall +qall"
+	@echo "Installing Vim plugins..."
+	vim +PluginInstall +qall
 
 clean_vim:
 	rm -rf ~/.vimrc
@@ -63,6 +64,11 @@ clean_tmux:
 install_git: clean_git
 	ln -sf ${DOTFILES}/git/gitconfig ~/.gitconfig
 	ln -sf ${DOTFILES}/git/gitmessage ~/.gitmessage
+	@echo "\nGit config settings"
+	@read -p "user.name: " git_name; \
+	sed -i -e "s/%%GITNAME%%/$$git_name/" ${TARGET}/.gitconfig
+	@read -p "user.email: " git_email; \
+	sed -i -e "s/%%GITEMAIL%%/$$git_email/" ${TARGET}/.gitconfig
 
 clean_git:
 	rm -rf ${TARGET}/.gitconfig

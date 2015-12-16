@@ -314,7 +314,11 @@ let pyindent_open_paren="&sw*2"
 
 " Theme/Colors
 set t_Co=256 " terminal has 256 colors
-colorscheme onedark
+try
+    colorscheme onedark
+catch /^Vim\%((\a\+)\)\=:E185/
+    " Use default
+endtry
 
 " Set ColorColumn
 highlight ColorColumn ctermbg=magenta ctermfg=white guibg=magenta guifg=white
