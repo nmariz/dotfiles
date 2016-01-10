@@ -45,6 +45,9 @@ if [ -x "$(command -v pyenv)" ]; then
     eval "$(pyenv init -)"
 fi
 
++# ConnectIQ
++export PATH="$HOME/bin/connectiq-sdk/bin:$PATH"
+
 # Disable auto title in Tmuxinator
 export DISABLE_AUTO_TITLE=true
 
