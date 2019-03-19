@@ -1,0 +1,945 @@
+#+TITLE: Nuno Mariz's Emacs configuration
+#+STARTUP: overview
+#+OPTIONS: toc:4 h:4
+#+OPTIONS: ^:nil
+
+* Notes
+  This Emacs configuration was heavily inspired on [[https://github.com/zamansky/dotemacs][Mike Zamansky's]] and [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua’s]] configurations.
+
+** First time
+Use M-x package-refresh-contents to reload the list of packages after adding these for the first time.
+
+** Commenting out sections
+Add ~:tangle no~ to the end of the begin_src lines – see the init.el section for an example.
+
+* Installing Emacs
+
+** Mac OS X
+
+*** 24.5 (Stable)
+#+BEGIN_SRC sh
+  brew update
+  brew install emacs --HEAD --with-cocoa --with-gnutls
+#+END_SRC
+
+*** 24.n (Development)
+#+BEGIN_SRC sh
+  brew update
+  brew install emacs --devel --with-cocoa --with-gnutls
+#+END_SRC
+
+* The init.el
+  It will load when emacs starts and then it will run everything in this file.
+  #+BEGIN_SRC emacs-lisp :tangle no
+    (package-initialize nil)
+    (add-to-list 'load-path "~/.emacs.d/packages/org-mode/contrib/lisp")
+    (add-to-list 'load-path "~/.emacs.d/packages/org-mode/lisp")
+    (add-to-list 'load-path "~/.emacs.d/packages/lisp")
+
+    (require 'package)
+
+    (add-to-list 'package-archives
+                 '("melpa" . "http://melpa.org/packages/") t)
+    (add-to-list 'package-archives
+                 '("org" . "http://orgmode.org/elpa/") t)
+
+    ;; Override the packages with the git version of Org and other packages
+    (package-initialize t)
+    (setq package-enable-at-startup nil)
+    (require 'org)
+    (require 'ob-tangle)
+    (org-babel-load-file (expand-file-name "~/.emacs.d/config.org"))
+  #+END_SRC
+
+* Basic Configuration and setup
+
+** Set up use-package
+#+BEGIN_SRC emacs-lisp
+  ;; Bootstrap `use-package'
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+#+END_SRC
+
+** Personal info
+#+BEGIN_SRC emacs-lisp
+  (setq user-full-name "Nuno Mariz"
+        user-mail-address "")
+#+END_SRC
+
+** Mac OS X misc
+#+BEGIN_SRC emacs-lisp
+  (setq mac-option-key-is-meta t)
+  (setq mac-right-option-modifier nil)
+#+END_SRC
+
+* General configuration
+
+** Interface settings
+#+BEGIN_SRC emacs-lisp
+  ;; No splash screen
+  (setq inhibit-startup-message t)
+  (setq initial-scratch-message nil)
+  (setq initial-major-mode 'text-mode)
+
+  ;; No menu bar, no tool bar and no scroll bar
+  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1)) ;; Use C-c m to toggle
+  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+  (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+
+  ;; Highlight the end of buffer
+  (setq-default indicate-empty-lines t)
+
+  ;; Auto refresh buffers when edits occur outside emacs
+  (global-auto-revert-mode 1)
+  (global-set-key (kbd "<f5>") 'revert-buffer)
+
+  ;; Remove text in active region if inserting text
+  (delete-selection-mode 1)
+
+  ;; Use UTF-8
+  (setq locale-coding-system 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-selection-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+
+  ;; Always display line and column numbers
+  (setq line-number-mode t)
+  (setq column-number-mode t)
+
+  ;; Set the highlight current line minor mode
+  ;; (if window-system
+  ;;     (global-hl-line-mode 1))
+
+  ;; Shell colors
+  (ansi-color-for-comint-mode-on)
+
+  ;; Lines should be 80 characters wide
+  (setq fill-column 80)
+
+  ;; Write backup files to own directory
+  (setq backup-directory-alist
+        `(("." . ,(expand-file-name
+                   (concat user-emacs-directory "backups")))))
+
+  ;; Allow clipboard from outside emacs
+  (setq x-select-enable-clipboard t
+        x-select-enable-primary t
+        save-interprogram-paste-before-kill t
+        apropos-do-all t
+        mouse-yank-at-point t)
+
+  ;; Ispell program
+  (setq-default ispell-program-name "aspell")
+
+  ;; Always end a file with a newline
+  (setq require-final-newline t)
+
+  ;; Stop at the end of the file, not just add lines
+  (setq next-line-add-newlines nil)
+
+  ;; Global font-lock-mode
+  (global-font-lock-mode t)
+
+  ;; Save point position between sessions
+  (use-package saveplace)
+  (setq-default save-place t)
+  (setq save-place-file (expand-file-name "places" user-emacs-directory))
+
+  ;; Fix empty pasteboard error.
+  (setq save-interprogram-paste-before-kill nil)
+
+  ;; Keep emacs custom settings in separate file
+  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+  (load custom-file)
+
+  ;; System locale to use for formatting time values
+  (setq system-time-locale "C")
+#+END_SRC
+
+** Theme and fonts
+#+BEGIN_SRC emacs-lisp
+  (if (display-graphic-p)
+      (use-package arjen-grey-theme
+        :ensure t
+        :config (load-theme 'arjen-grey t)))
+  (unless (display-graphic-p)
+    (load-theme 'wombat t))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; (if (or (eq system-type 'darwin)(eq system-type 'gnu/linux))
+  ;;     (set-face-attribute 'default nil
+  ;;                         :family "Source Code Pro for Powerline"
+  ;;                         :height 110
+  ;;                         :weight 'normal
+  ;;                         :width 'normal))
+
+  (if (or (eq system-type 'darwin)(eq system-type 'gnu/linux))
+      (set-face-attribute 'default nil
+                          :family "Fira Mono for Powerline"
+                          :height 100
+                          :weight 'normal
+                          :width 'normal))
+#+END_SRC
+
+Word wrapping
+
+#+BEGIN_SRC emacs-lisp
+  (dolist (hook '(text-mode-hook))
+    (add-hook hook (lambda ()
+                     (flyspell-mode 1)
+                     (visual-line-mode 1))))
+#+END_SRC
+
+** Mode line format
+#+BEGIN_SRC emacs-lisp
+  (use-package powerline
+    :ensure t)
+  (powerline-default-theme)
+  ;; Turn off sRGB to make the colors look right
+  (setq ns-use-srgb-colorspace nil)
+#+END_SRC
+
+Remove or abbreviate minor mode indicators:
+
+#+BEGIN_SRC emacs-lisp
+  (use-package diminish
+    :ensure t)
+  (eval-after-load "yasnippet" '(diminish 'yas-minor-mode))
+  (eval-after-load "undo-tree" '(diminish 'undo-tree-mode))
+  (eval-after-load "guide-key" '(diminish 'guide-key-mode))
+  (eval-after-load "smartparens" '(diminish 'smartparens-mode))
+  (eval-after-load "guide-key" '(diminish 'guide-key-mode))
+  (eval-after-load "eldoc" '(diminish 'eldoc-mode))
+  (diminish 'visual-line-mode)
+#+END_SRC
+
+** Hungry Delete
+#+BEGIN_SRC emacs-lisp
+  (use-package hungry-delete
+    :ensure t
+    :config (global-hungry-delete-mode))
+#+END_SRC
+
+** Expand Region
+#+BEGIN_SRC emacs-lisp
+  (use-package expand-region
+    :ensure t
+    :config
+    (progn
+      (global-set-key (kbd "C-=") 'er/expand-region)))
+#+END_SRC
+
+** Fill column indicator
+#+BEGIN_SRC emacs-lisp
+  (use-package fill-column-indicator
+    :ensure t
+    :init
+    (progn
+      (add-hook 'prog-mode-hook 'fci-mode))
+    :config
+    (progn
+      (setq fci-rule-column 80)
+      (setq fci-handle-truncate-lines nil)
+      (setq fci-rule-width 2)
+      (setq fci-rule-color "#2f343f")))
+#+END_SRC
+
+** Whitespace
+#+BEGIN_SRC emacs-lisp
+  (use-package whitespace
+    :ensure t
+    :diminish whitespace-mode
+    :init (global-whitespace-mode t)
+    :config (setq whitespace-style '(face trailing tabs lines-tail)
+                  whitespace-line-column -1))
+#+END_SRC
+
+** Undo tree mode
+Improved undo system. Use C-x u
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree
+    :ensure t
+    :init
+    (progn
+      (global-undo-tree-mode)
+      (setq undo-tree-visualizer-timestamps t)
+      (setq undo-tree-visualizer-diff t)))
+#+END_SRC
+
+** Beacon mode
+#+BEGIN_SRC emacs-lisp
+  (use-package beacon
+    :ensure t
+    :config
+    (progn
+      (beacon-mode 1)
+      (setq beacon-push-mark 35)
+      (setq beacon-size 80)
+      (setq beacon-color "#c0a9ec")))
+#+END_SRC
+
+* Navigation
+
+** ibuffer
+#+BEGIN_SRC emacs-lisp
+  (use-package ibuffer
+    :bind ("C-x C-b" . ibuffer))
+#+END_SRC
+
+** Ace-window
+Emacs package for selecting a window to switch to.
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+    :ensure t
+    :init
+    (progn
+      (global-set-key [remap other-window] 'ace-window)
+      (custom-set-faces
+       '(aw-leading-char-face
+         ((t (:inherit ace-jump-face-foreground :height 3.0)))))))
+#+END_SRC
+
+** Ivy
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy
+    :ensure t)
+#+END_SRC
+
+** Counsel
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package counsel
+    :ensure t)
+#+END_SRC
+
+** Swiper
+#+BEGIN_SRC emacs-lisp
+  (use-package swiper
+    :ensure try
+    :config
+    (progn
+      (ivy-mode 1)
+      (setq ivy-display-style 'fancy)
+      (global-set-key "\C-s" 'swiper)
+      (global-set-key (kbd "C-c C-r") 'ivy-resume)
+      (global-set-key (kbd "<f6>") 'ivy-resume)
+      (global-set-key (kbd "M-x") 'counsel-M-x)
+      ;; (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+      (global-set-key (kbd "<f1> f") 'counsel-describe-function)
+      (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+      (global-set-key (kbd "<f1> l") 'counsel-load-library)
+      (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+      (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+      (global-set-key (kbd "C-c g") 'counsel-git)
+      (global-set-key (kbd "C-c j") 'counsel-git-grep)
+      (global-set-key (kbd "C-c k") 'counsel-ag)
+      (global-set-key (kbd "C-x l") 'counsel-locate)
+      (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+      (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)))
+#+END_SRC
+
+** Neotree
+#+BEGIN_SRC emacs-lisp
+  (use-package neotree
+    :ensure t
+    :config
+    (progn
+      (global-set-key (kbd "<f8>") 'neotree-toggle)))
+#+END_SRC
+
+** Markdown
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-mode
+    :ensure t
+    :mode (("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode)))
+
+  (custom-set-faces
+   '(markdown-header-face ((t (:inherit font-lock-function-name-face :weight bold :family "variable-pitch"))))
+   '(markdown-header-face-1 ((t (:inherit markdown-header-face :height 1.8))))
+   '(markdown-header-face-2 ((t (:inherit markdown-header-face :height 1.4))))
+   '(markdown-header-face-3 ((t (:inherit markdown-header-face :height 1.2))))
+   '(markdown-header-face-4 ((t (:inherit markdown-header-face :height 1.1)))))
+#+END_SRC
+
+** reStructuredText
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-mode
+    :ensure t
+    :mode (("\\.rst\\'" . rst-mode)
+           ("\\.rest\\'" . rst-mode)))
+#+END_SRC
+
+* Org
+
+** Config
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :ensure t
+    :mode ("\\.org\\'" . org-mode)
+    :bind (("C-c l" . org-store-link)
+           ("C-c c" . org-capture)
+           ("C-c a" . org-agenda)
+           ("C-c b" . org-iswitchb)
+           ("C-c C-w" . org-refile)
+           ("C-c j" . org-clock-goto)
+           ("C-c C-x C-o" . org-clock-out))
+    :init
+    ;; (setq org-directory "~/Dropbox/Org")
+    (setq org-directory "~/org")
+    :config
+    (progn
+      (setq org-default-notes-file (concat org-directory "/notes.org"))
+      (setq org-export-coding-system 'utf-8)
+      (setq org-export-html-postamble nil)
+      (setq org-hide-leading-stars t)
+      (setq org-log-done t)              ;; Add time stamp and note to the task when it's done
+      (setq org-log-into-drawer t)       ;; Insert state change notes and time stamps into a drawer
+      (setq org-src-fontify-natively t)  ;; Fontify code in code blocks
+      (setq org-src-tab-acts-natively t) ;; Completion in blocks
+      (setq org-hide-emphasis-markers t) ;; Hide the *,=, or / markers
+      (setq org-pretty-entities t)       ;; To have \alpha, \to and others display as utf8 http://orgmode.org/manual/Special-symbols.html
+      (setq org-startup-folded (quote overview))
+      (setq org-startup-indented t)
+      (setq org-file-apps (append '(("\\.pdf\\'" . "evince %s")) org-file-apps))
+      (setq org-agenda-files (list
+                              "~/org/followup.org"
+                              "~/org/meetings.org"
+                              "~/org/notes.org"
+                              "~/org/todo.org"))
+
+
+      ;; Capture templates
+      (setq org-capture-templates
+            ;; (quote (("t" "TODO" entry (file+headline (concat org-directory "/todo.org") "Backlog")
+            (quote (("t" "TODO" entry (file+headline "~/org/todo.org" "Backlog")
+                     "* TODO %^{Description}\n:LOGBOOK:\n:ADDED: %U\n:END:" :clock-resume t :prepend t)
+                    ;; ("b" "Bookmark" entry (file+headline (concat org-directory "/bookmarks.org") "Bookmarks")
+                    ("b" "Bookmark" entry (file+headline "~/org/bookmarks.org" "Bookmarks")
+                     "* %^{Title}\n%x%?\n:PROPERTIES:\n:CREATED: %U\n:END:" :empty-lines 1)
+                    ;; ("j" "Journal entry" entry (file+datetree (concat org-directory "/journal.org")) "** %U :: %^{Title}\n%?")
+                    ("j" "Journal entry" entry (file+datetree "~/org/journal.org") "** %U :: %^{Title}\n%?")
+                    ;; ("m" "Meeting" entry (file+datetree (concat org-directory "/meetings.org")) "** %U :: %^{Title}\n%?")
+                    ("m" "Meeting" entry (file+datetree "~/org/meetings.org") "** %U :: %^{Title}\n%?")
+                    ;; ("n" "Note" entry (file (concat org-directory "/notes.org"))
+                    ("n" "Note" entry (file "~/org/notes.org")
+                     "* %U %?"))))
+      (setq org-todo-keywords
+            (quote ((sequence "TODO(t!)" "NEXT(n!)" "STARTED(s!)" "DOCUMENTING(g!)" "|" "DONE(d!)")
+                    (sequence "WAITING(w!)" "HOLD(h!)" "IN REVIEW(r!)" "|" "CANCELLED(c@)"))))
+      (setq org-todo-keyword-faces
+            (quote (("TODO" :foreground "red" :weight bold)
+                    ("NEXT" :foreground "red" :weight bold)
+                    ("STARTED" :foreground "dodger blue" :weight bold)
+                    ("DONE" :foreground "forest green" :weight bold)
+                    ("WAITING" :foreground "orange" :weight bold)
+                    ("HOLD" :foreground "magenta" :weight bold)
+                    ("IN REVIEW" :foreground "orange" :weight bold)
+                    ("CANCELLED" :foreground "forest green" :weight bold)
+                    ("PHONE" :foreground "forest green" :weight bold)
+                    ("DOCUMENTING" :foreground "magenta" :weight bold))))
+      (setq org-columns-default-format "%40ITEM %TODO %5Effort(Effort){:} %6CLOCKSUM")
+      (setq org-clock-in-switch-to-state "STARTED")
+
+      ;; Ditaa
+      (setq org-ditaa-jar-path "~/.emacs.d/ditaa0_9.jar")))
+
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (linum-mode 0)
+              (org-indent-mode t)
+              (visual-line-mode t)))
+
+  ;; Active Babel languages
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)
+     (ditaa . t)))
+
+  (when (window-system)
+    (custom-set-faces
+     '(org-document-title ((t :height 1.5 :weight bold)))
+     '(org-level-1 ((t :height 1.4 :weight bold)))
+     '(org-level-2 ((t :height 1.1 :weight bold)))
+     '(org-level-3 ((t :height 1.0 :weight bold)))
+     '(org-level-4 ((t :height 1.0 :weight bold)))))
+#+END_SRC
+
+** Org bullets
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package org-bullets
+    :ensure t
+    :init
+    (progn
+      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
+#+END_SRC
+** Skeleton
+#+BEGIN_SRC emacs-lisp
+  (define-skeleton skel-header-block
+    "Creates my default header"
+    ""
+    "#+TITLE: " str "\n"
+    "#+AUTHOR: Nuno Mariz\n"
+    "#+EMAIL: \n"
+    "#+STARTUP: overview\n"
+    "#+ARCHIVE: archive/%s::\n"
+    "#+OPTIONS: ^:nil\n")
+#+END_SRC
+** org-complete
+#+BEGIN_SRC emacs-lisp
+  (use-package org-ac
+    :ensure t
+    :init
+    (progn
+      (require 'org-ac)
+      (org-ac/config-default)))
+#+END_SRC
+
+** org-dashboard
+#+BEGIN_SRC emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :config
+    (dashboard-setup-startup-hook))
+    (setq dashboard-banner-logo-title ""
+          dashboard-items '((bookmarks . 5)
+                            (recents . 10)))
+#+END_SRC
+
+** ox-gfm
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-gfm
+    :ensure t
+    :config)
+#+END_SRC
+
+* Programming
+
+** Code Folding
+
+https://github.com/credmp/emacs-config/blob/master/loader.org#code-folding
+
+#+BEGIN_SRC emacs-lisp
+  (use-package hideshow
+    :ensure t
+    :bind (("C->" . my-toggle-hideshow-all)
+           ("C-<" . hs-hide-level)
+           ("C-;" . hs-toggle-hiding))
+    :config
+    ;; Hide the comments too when you do a 'hs-hide-all'
+    (setq hs-hide-comments nil)
+    ;; Set whether isearch opens folded comments, code, or both
+    ;; where x is code, comments, t (both), or nil (neither)
+    (setq hs-isearch-open 'x)
+    (setq hs-set-up-overlay
+          (defun my-display-code-line-counts (ov)
+            (when (eq 'code (overlay-get ov 'hs))
+              (overlay-put ov 'display
+                           (propertize
+                            (format " ... <%d>"
+                                    (count-lines (overlay-start ov)
+                                                 (overlay-end ov)))
+                            'face 'font-lock-type-face)))))
+
+    (defvar my-hs-hide nil "Current state of hideshow for toggling all.")
+    (defun my-toggle-hideshow-all () "Toggle hideshow all."
+           (interactive)
+           (setq my-hs-hide (not my-hs-hide))
+           (if my-hs-hide
+               (hs-hide-all)
+             (hs-show-all)))
+
+    (hs-minor-mode 1))
+#+END_SRC
+
+** Company
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :config
+    (add-hook 'after-init-hook 'global-company-mode))
+#+END_SRC
+
+** Smartparens
+#+BEGIN_SRC emacs-lisp
+  (use-package smartparens
+    :ensure smartparens
+    :config
+    (progn
+      (require 'smartparens-config)
+      (require 'smartparens-html)
+      (require 'smartparens-python)
+      (require 'smartparens-latex)
+      (smartparens-global-mode t)
+      (show-smartparens-global-mode t)))
+#+END_SRC
+
+** Autocomplete
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package auto-complete
+    :ensure t
+    :init
+    (progn
+      (ac-config-default)
+      (global-auto-complete-mode t)))
+#+END_SRC
+
+** Magit
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t
+    :init
+    (progn
+      (bind-key "C-x g" 'magit-status)))
+#+END_SRC
+
+** Git Gutter
+#+BEGIN_SRC emacs-lisp
+  (use-package git-gutter
+    :ensure t
+    :init
+    (progn
+      (global-git-gutter-mode t)))
+
+  ;; If you would like to use git-gutter.el and linum-mode
+  ;; (git-gutter:linum-setup)
+
+  (global-set-key (kbd "C-x C-g") 'git-gutter)
+  (global-set-key (kbd "C-x v =") 'git-gutter:popup-hunk)
+
+  ;; Jump to next/previous hunk
+  (global-set-key (kbd "C-x C-p") 'git-gutter:previous-hunk)
+  (global-set-key (kbd "C-x C-n") 'git-gutter:next-hunk)
+
+  ;; Stage current hunk
+  ;; (global-set-key (kbd "C-x v s") 'git-gutter:stage-hunk)
+
+  ;; Revert current hunk
+  (global-set-key (kbd "C-x v r") 'git-gutter:revert-hunk)
+
+  ;; Mark current hunk
+  ;; (global-set-key (kbd "C-x v SPC") #'git-gutter:mark-hunk)
+#+END_SRC
+
+** Yasnippets
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :init
+    (progn
+      (yas-global-mode 1)))
+#+END_SRC
+
+** Python
+*** Install helpful =Python= packages
+#+BEGIN_SRC sh
+  pip install elpy rope jedi flake8 autopep8 pep8 pylint yapf importmagic
+#+END_SRC
+
+*** Python
+Read the docs here http://elpy.readthedocs.io
+#+BEGIN_SRC emacs-lisp
+  (use-package python
+    :mode ("\\.py" . python-mode)
+    :config
+    (use-package elpy
+      :ensure t
+      :config
+
+      ;; Use Jedi as backend
+      (setq elpy-rpc-backend "jedi")
+
+      ;; Use iPython
+      (when (executable-find "ipython")
+        (setq python-shell-interpreter "ipython"
+              python-shell-interpreter-args "-i"))
+
+      ;; Use Flycheck
+      (when (require 'flycheck nil t)
+        (remove-hook 'elpy-modules #'elpy-module-flymake)
+        (add-hook 'elpy-mode-hook #'flycheck-mode))
+
+      ;; Disable some modules.
+      (let ((disabled-modules '(elpy-module-flymake elpy-module-highlight-indentation)))
+        (setq elpy-modules (-difference elpy-modules disabled-modules)))
+
+      :bind (:map elpy-mode-map
+                  ("M-." . elpy-goto-definition)
+                  ("M-," . pop-tag-mark)))
+
+    (use-package pyenv-mode
+      :init
+      (add-to-list 'exec-path "~/.pyenv/shims")
+      (setenv "WORKON_HOME" "~/.pyenv/versions/")
+      :config
+      (pyenv-mode)
+      :bind
+      ("C-x p e" . pyenv-activate-current-project))
+    (elpy-enable))
+#+END_SRC
+
+*** C/C++
+C-IDE based on https://github.com/tuhdo/emacs-c-ide-demo
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package google-c-style
+    :init (add-hook 'c-mode-common-hook 'google-set-c-style))
+
+  (use-package cc-mode
+    :config
+    ;; Available C style:
+    ;; "gnu": The default style for GNU projects
+    ;; "k&r": What Kernighan and Ritchie, the authors of C used in their book
+    ;; "bsd": What BSD developers use, aka "Allman style" after Eric Allman.
+    ;; "whitesmith": Popularized by the examples that came with Whitesmiths C, an early commercial C compiler.
+    ;; "stroustrup": What Stroustrup, the author of C++ used in his book
+    ;; "ellemtel": Popular C++ coding standards as defined by "Programming in C++, Rules and Recommendations," Erik Nyquist and Mats Henricson, Ellemtel
+    ;; "linux": What the Linux developers use for kernel development
+    ;; "python": What Python developers use for extension modules
+    ;; "java": The default style for java-mode (see below)
+    ;; "user": When you want to define your own style
+    ;; (setq c-default-style "linux") ;; set style to "linux"
+    (setq gdb-many-windows t ;; use gdb-many-windows by default
+          gdb-show-main t))
+
+  (use-package semantic
+    :config
+    (global-semanticdb-minor-mode 1)
+    (global-semantic-idle-scheduler-mode 1)
+    (global-semantic-stickyfunc-mode 1)
+    (semantic-mode 1))
+
+  ;; (use-package ede
+  ;;   :config
+  ;;   ;; Enable EDE only in C/C++
+  ;;   (global-ede-mode))
+
+  (use-package ggtags
+    :config
+    (ggtags-mode 1)
+    (add-hook 'c-mode-common-hook
+              (lambda ()
+                (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+                  (ggtags-mode 1))))
+
+    (dolist (map (list ggtags-mode-map))
+      (define-key map (kbd "C-c g s") 'ggtags-find-other-symbol)
+      (define-key map (kbd "C-c g h") 'ggtags-view-tag-history)
+      (define-key map (kbd "C-c g r") 'ggtags-find-reference)
+      (define-key map (kbd "C-c g f") 'ggtags-find-file)
+      (define-key map (kbd "C-c g c") 'ggtags-create-tags)
+      (define-key map (kbd "C-c g u") 'ggtags-update-tags)
+      (define-key map (kbd "M-.")     'ggtags-find-tag-dwim)
+      (define-key map (kbd "M-,")     'pop-tag-mark)
+      (define-key map (kbd "C-c <")   'ggtags-prev-mark)
+      (define-key map (kbd "C-c >")   'ggtags-next-mark)))
+
+  ;; company-c-headers
+  (use-package company-c-headers
+    :init
+    (add-to-list 'company-backends 'company-c-headers))
+
+  (use-package cc-mode
+    :init
+    (define-key c-mode-map  [(tab)] 'company-complete)
+    (define-key c++-mode-map  [(tab)] 'company-complete))
+
+  (defun alexott/cedet-hook ()
+    (local-set-key (kbd "C-c C-j") 'semantic-ia-fast-jump)
+    (local-set-key (kbd "C-c C-s") 'semantic-ia-show-summary))
+
+  ;; hs-minor-mode for folding source code
+  (add-hook 'c-mode-common-hook 'hs-minor-mode)
+  (add-hook 'c-mode-common-hook 'alexott/cedet-hook)
+  (add-hook 'c-mode-hook 'alexott/cedet-hook)
+  (add-hook 'c++-mode-hook 'alexott/cedet-hook)
+#+END_SRC
+
+** Golang
+*** go-playground
+Local Golang playground
+https://github.com/grafov/go-playground
+#+BEGIN_SRC emacs-lisp
+  (use-package go-playground
+    :ensure t)
+#+END_SRC
+
+*** gocode
+#+BEGIN_SRC emacs-lisp
+  (use-package go-autocomplete
+    :ensure t)
+#+END_SRC
+
+*** go-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package go-mode
+    :ensure t)
+#+END_SRC
+
+** Web Mode
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package web-mode
+    :bind (("C-c ]" . emmet-next-edit-point)
+           ("C-c [" . emmet-prev-edit-point)
+           ("C-c o b" . browse-url-of-file))
+    :mode
+    (("\\.js\\'" . web-mode)
+     ("\\.html?\\'" . web-mode)
+     ("\\.phtml?\\'" . web-mode)
+     ("\\.tpl\\.php\\'" . web-mode)
+     ("\\.[agj]sp\\'" . web-mode)
+     ("\\.as[cp]x\\'" . web-mode)
+     ("\\.erb\\'" . web-mode)
+     ("\\.mustache\\'" . web-mode)
+     ("\\.djhtml\\'" . web-mode)
+     ("\\.jsx$" . web-mode))
+    :config
+    (setq web-mode-markup-indent-offset 2
+          web-mode-css-indent-offset 2
+          web-mode-code-indent-offset 2)
+
+    (add-hook 'web-mode-hook 'jsx-flycheck)
+
+    ;; highlight enclosing tags of the element under cursor
+    (setq web-mode-enable-current-element-highlight t)
+
+    (defadvice web-mode-highlight-part (around tweak-jsx activate)
+      (if (equal web-mode-content-type "jsx")
+          (let ((web-mode-enable-part-face nil))
+            ad-do-it)
+        ad-do-it))
+
+    (defun jsx-flycheck ()
+      (when (equal web-mode-content-type "jsx")
+        ;; enable flycheck
+        (flycheck-select-checker 'jsxhint-checker)
+        (flycheck-mode)))
+
+    ;; editing enhancements for web-mode
+    ;; https://github.com/jtkDvlp/web-mode-edit-element
+    (use-package web-mode-edit-element
+      :config (add-hook 'web-mode-hook 'web-mode-edit-element-minor-mode))
+
+    ;; snippets for HTML
+    ;; https://github.com/smihica/emmet-mode
+    (use-package emmet-mode
+      :init (setq emmet-move-cursor-between-quotes t) ;; default nil
+      :diminish (emmet-mode . " e"))
+    (add-hook 'web-mode-hook 'emmet-mode)
+
+    (defun my-web-mode-hook ()
+      "Hook for `web-mode' config for company-backends."
+      (set (make-local-variable 'company-backends)
+           '((company-tern company-css company-web-html company-files))))
+    (add-hook 'web-mode-hook 'my-web-mode-hook)
+
+    ;; Enable JavaScript completion between <script>...</script> etc.
+    (defadvice company-tern (before web-mode-set-up-ac-sources activate)
+      "Set `tern-mode' based on current language before running company-tern."
+      (message "advice")
+      (if (equal major-mode 'web-mode)
+          (let ((web-mode-cur-language
+                 (web-mode-language-at-pos)))
+            (if (or (string= web-mode-cur-language "javascript")
+                    (string= web-mode-cur-language "jsx"))
+                (unless tern-mode (tern-mode))
+              (if tern-mode (tern-mode -1))))))
+    (add-hook 'web-mode-hook 'company-mode)
+
+    ;; to get completion data for angularJS
+    (use-package ac-html-angular :defer t)
+    ;; to get completion for twitter bootstrap
+    (use-package ac-html-bootstrap :defer t)
+
+    ;; to get completion for HTML stuff
+    ;; https://github.com/osv/company-web
+    (use-package company-web)
+
+    (add-hook 'web-mode-hook 'company-mode))
+
+  ;; configure CSS mode company backends
+  (use-package css-mode
+    :config
+    (defun my-css-mode-hook ()
+      (set (make-local-variable 'company-backends)
+           '((company-css company-dabbrev-code company-files))))
+    (add-hook 'css-mode-hook 'my-css-mode-hook)
+    (add-hook 'css-mode-hook 'company-mode))
+
+  ;; impatient mode - Live refresh of web pages
+  ;; https://github.com/skeeto/impatient-mode
+  (use-package impatient-mode
+    :diminish (impatient-mode . " i")
+    :commands (impatient-mode))
+#+END_SRC
+
+*** Key bindings
+=C-c C-f= folds html tags.
+
+=C-c C-n= moves between the start / end tag.
+
+=C-c C-w= shews problematic white-space.
+
+** JavaScript
+[[https://github.com/mooz/js2-mode][js2-mode]] provides better js editing and ECMAScript 2015 support.
+#+BEGIN_SRC emacs-lisp
+  (use-package js2-mode
+    :ensure t
+    :bind (:map js2-mode-map
+                (("C-x C-e" . js-send-last-sexp)
+                 ("C-M-x" . js-send-last-sexp-and-go)
+                 ("C-c C-b" . js-send-buffer-and-go)
+                 ("C-c C-l" . js-load-file-and-go)))
+    :mode
+    ("\\.js$" . js2-mode)
+    ("\\.json$" . js2-jsx-mode)
+    :config
+    (custom-set-variables '(js2-strict-inconsistent-return-warning nil))
+    (custom-set-variables '(js2-strict-missing-semi-warning nil))
+
+    (setq js-indent-level 2)
+    (setq js2-indent-level 2)
+    (setq js2-basic-offset 2))
+
+  ;; tern :- IDE like features for javascript and completion
+  ;; http://ternjs.net/doc/manual.html#emacs
+  (use-package tern
+    :ensure t
+    :config
+    (defun my-js-mode-hook ()
+      "Hook for `js-mode'."
+      (set (make-local-variable 'company-backends)
+           '((company-tern company-files))))
+    (add-hook 'js2-mode-hook 'my-js-mode-hook)
+    (add-hook 'js2-mode-hook 'company-mode))
+#+END_SRC
+
+** CSS
+#+BEGIN_SRC emacs-lisp
+  (use-package css-mode
+    :init
+    (progn
+      (add-to-list 'auto-mode-alist '("\\.scss$" . css-mode))
+      (add-to-list 'auto-mode-alist '("\\.sass$" . css-mode))))
+#+END_SRC
+
+** Linum
+#+BEGIN_SRC emacs-lisp :tangle no
+  (setq linum-format "%d ")
+  (add-hook 'prog-mode-hook 'linum-mode)
+  (add-hook 'text-mode-hook 'linum-mode)
+#+END_SRC
+
+** imenu
+#+BEGIN_SRC emacs-lisp
+  (use-package imenu-anywhere
+    :ensure t)
+
+  (use-package imenu-list
+    :ensure t
+    ;; :bind ("C-'" . imenu-list-smart-toggle)
+    :bind ("<f9>" . imenu-list-smart-toggle)
+    :config
+    (setq imenu-list-size 0.15
+          imenu-list-auto-resize t))
+#+END_SRC

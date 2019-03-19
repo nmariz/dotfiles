@@ -9,35 +9,23 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 
 " Plugins
-Plugin 'bling/vim-airline'
-Plugin 'cwood/vim-django'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'davidhalter/jedi-vim'
-Plugin 'ervandew/supertab'
-Plugin 'fs111/pydoc.vim'
+Plugin 'ervandew/supertab' " ???
 Plugin 'geoffharcourt/one-dark.vim'
-Plugin 'gregsexton/gitv'
-Plugin 'hail2u/vim-css3-syntax'
-Plugin 'jistr/vim-nerdtree-tabs'
-Plugin 'jmcantrell/vim-virtualenv'
-Plugin 'kien/ctrlp.vim'
+Plugin 'itchyny/lightline.vim'
+Plugin 'itchyny/vim-gitbranch'
 Plugin 'majutsushi/tagbar'
-Plugin 'msanders/snipmate.vim'
 Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'ntpeters/vim-better-whitespace'
-Plugin 'nvie/vim-flake8'
-Plugin 'othree/html5.vim'
-Plugin 'pangloss/vim-javascript'
-Plugin 'rstacruz/sparkup'
-Plugin 'Rykka/riv.vim'
+Plugin 'rakr/vim-one'
+Plugin 'rust-lang/rust.vim'
 Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-markdown'
-Plugin 'tpope/vim-surround'
-Plugin 'vim-scripts/indentpython.vim'
-Plugin 'vim-scripts/xoria256.vim'
-
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'w0rp/ale'
 " All of your Plugins must be added before the following line
 " To install the plugins, launch vim and run :PluginInstall
 " Or from command line: vim +PluginInstall +qall
@@ -49,7 +37,11 @@ filetype plugin indent on
 " Enable syntax hightlight
 syntax on
 
+
 " Editor settings
+" ---------------
+
+" General
 set confirm " prompt when existing from an unsaved file
 set hidden " allow hiding buffers instead of closing them
 set wildmenu " better command-line completion
@@ -62,6 +54,10 @@ set encoding=utf-8 " set the default file encoding to UTF-8:
 " Automatic reloading of .vimrc
 autocmd! bufwritepost .vimrc source %
 
+" Security
+set cm=blowfish2 " set cryptmethod to blowfish2
+set viminfo= " the viminfo file is not encrypted, and thus should not be used
+
 " Better copy & paste
 " When you want to paste large blocks of code into vim, press F2 before you
 " paste. At the bottom you should see ``-- INSERT (paste) --``.
@@ -72,24 +68,6 @@ set clipboard=unnamed
 set mouse=a  " on OSX press ALT and click
 set bs=2 " make backspace behave like normal again
 
-" Rebind <Leader> key
-" I like to have it here becuase it is easier to reach than the default and
-" it is next to ``m`` and ``n`` which I use for navigating between tabs.
-let mapleader = ","
-
-" Status line configuration
-function! FileSize()
-    let bytes = getfsize(expand("%:p"))
-    if bytes <= 0
-        return ""
-    endif
-    if bytes < 1024
-        return bytes . "b"
-    else
-        return (bytes / 1024) . "k"
-    endif
-endfunction
-
 " Display settings
 set textwidth=0 " text width
 set mouse=a " use mouse in all modes
@@ -98,8 +76,8 @@ set wrap " wrap lines
 set linebreak " don't break words
 set nolist  " list disables linebreak
 set scrolloff=2 " 2 lines above/below cursor when scrolling
-set number " show line numbers
-set cursorline " highlight current line
+set number " show line number
+set relativenumber " show relative numbers
 set showmatch " show matching bracket (briefly jump)
 set showcmd " show typed command in status bar
 set title " show file in titlebar
@@ -111,13 +89,16 @@ set hlsearch " highlight search matches
 set incsearch " show search matches as you type
 set ignorecase " ignore case when searching
 set smartcase " ignore case if search pattern is all lowercase, case-sensitive otherwise
+set splitright " open file in right split
 set splitbelow " set the preview window in the bottom
+set noshowmode "disable show mode in status line
+set laststatus=2 " show filename at bottom of buffer
 
 " Folding settings
-set foldmethod=indent "fold based on indent
-set foldnestmax=10 "deepest fold is 10 levels
-set nofoldenable "dont fold by default
-set foldlevel=1 "this is just what i use
+set foldmethod=indent " fold based on indent
+set foldnestmax=10 " deepest fold is 10 levels
+set nofoldenable " dont fold by default
+set foldlevel=1 " this is just what i use
 
 " Real programmers don't use TABs but spaces
 set autoindent
@@ -133,60 +114,39 @@ set nobackup
 set nowritebackup
 set noswapfile
 
-autocmd FileType python,perl,php,c,cpp,cs,java     setlocal ai et sta sw=4 sts=4
-autocmd FileType ruby                              setlocal ai et sta sw=2 sts=2
-autocmd FileType javascript,coffee                 setlocal ai et sta sw=4 sts=4
-autocmd FileType sass,scss,css                     setlocal ai et sta sw=2 sts=2
-autocmd FileType html,xhtml,htmldjango,haml,wml,cf setlocal ai et sta sw=2 sts=2
-autocmd FileType xml,xsd,xslt                      setlocal ai et sta sw=2 sts=2
+" Set updatetime
+set ttimeoutlen=0
 
-" Settings for Django
-let g:django_projects = '/tmp' " sets all projects under project
-let g:django_project_container = 'source' " inside of these folders look for source
-let g:django_activate_virtualenv = 1 " try to activate the associated virtualenv
-let g:django_activate_nerdtree = 1 " try to open nerdtree at the project root.
 
-let g:html_indent_inctags = "html,body,head,tbody"
-let g:html_indent_script1 = "inc"
-let g:html_indent_style1 = "inc"
+" Plugins settings
+" ----------------
+
+" Exuberant Ctags path
+" let g:tagbar_ctags_bin='~/bin/ctags'
+
+" Settings for Lightline
+let g:lightline = {}
+let g:lightline.colorscheme = 'one'
+let g:lightline.active = {}
+let g:lightline.active.left = [ ['mode', 'paste'], [ 'gitbranch', 'readonly', 'filename' ] ]
+let g:lightline.component_function = { 'gitbranch': 'gitbranch#name' }
+let g:lightline.component_function = { 'filename': 'LightlineFilename' }
+
+function! LightlineFilename()
+  let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+  let modified = &modified ? ' +' : ''
+  return filename . modified
+endfunction
 
 " Settings for NERDTree
-let NERDChristmasTree=0
-let NERDTreeWinSize=30
-let NERDTreeChDirMode=2
-let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$', '\.swp$']
-let NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$', '\~$']
-let NERDTreeShowBookmarks=1
-let NERDTreeShowHidden=0 " don't show hidden files, use shift-i to toggle
+let NERDChristmasTree = 0
+let NERDTreeWinSize = 30
+let NERDTreeChDirMode = 2
+let NERDTreeIgnore = ['\.vim$', '\~$', '\.pyc$', '\.swp$']
+let NERDTreeSortOrder = ['^__\.py$', '\/$', '*', '\.swp$', '\~$']
+let NERDTreeShowBookmarks = 1
+let NERDTreeShowHidden = 0 " don't show hidden files, use shift-i to toggle
 let NERDTreeWinPos = "left"
-
-" Settings for NERDCommenter
-let g:NERDSpaceDelims = 1 " adds a space after comment char(s)
-
-" NERDTreeTabs on console vim startup
-let g:nerdtree_tabs_open_on_console_startup=0
-let g:nerdtree_tabs_open_on_gui_startup=0
-
-" Settings for Jedi
-let g:jedi#use_splits_not_buffers = "left"
-let g:jedi#show_call_signatures = "1"
-let g:jedi#popup_select_first = 1
-let g:jedi#goto_command = "<leader>d"
-let g:jedi#goto_assignments_command = "<leader>g"
-let g:jedi#goto_definitions_command = ""
-let g:jedi#documentation_command = "K"
-let g:jedi#usages_command = "<leader>n"
-let g:jedi#completions_command = "<C-Space>"
-let g:jedi#rename_command = "<leader>r"
-
-" Settings for Syntastic
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_aggregate_errors = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_loc_list_height=5
-let g:syntastic_python_checkers=['pep8']
 
 " Settings for ctrlp.vim
 let g:ctrlp_max_height = 25
@@ -194,51 +154,53 @@ set wildignore+=*.pyc
 set wildignore+=*_build/*
 set wildignore+=*/coverage/*
 
-" Settings for vim-airline
-set laststatus=2
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#right_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = ' '
-let g:airline_powerline_fonts = 1
-" let g:airline_left_sep = ''
-" let g:airline_left_alt_sep = ''
-" let g:airline_right_sep = ''
-" let g:airline_right_alt_sep = ''
+" Settings for GitGutter
+autocmd BufWritePost * GitGutter
 
-if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-    let g:airline_symbols.space = "\ua0"
-endif
+" Settings for YouCompleteMe
 
-" Settings for Gitv
-let g:Gitv_OpenHorizontal = 1
+" General
+let g:ycm_auto_trigger = 1
+let g:ycm_min_num_of_chars_for_completion = 2
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 0
+let g:ycm_filetype_blacklist = {}
+let g:ycm_semantic_triggers = {
+    \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+    \ 'cs,lua,javascript,rust': ['re!\w{2}'],
+    \ }
+let g:ycm_filetype_blacklist = {
+    \ 'tagbar' : 1,
+    \ 'nerdtree' : 1,
+    \ 'markdown' : 1,
+    \ 'unite' : 1,
+    \ 'text' : 1,
+    \ 'csv' : 1,
+    \ }
 
-" Enable omni completion.
-" Use ctrl-x ctrl-o to get the popup
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-" autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType c setlocal omnifunc=ccomplete#Complete
+" Rust
+" Installation instructions:
+"   $ cd ~/dev/github.com/ && git clone https://github.com/rust-lang/rust.git -b stable
+"   $ cd ~/.vim/bundle/YouCompleteMe && ./install.py --rust-completer && ./install.py --racer-completer
+"   $ rustup component add rustfmt
+let g:ycm_rust_src_path='~/dev/github.com/rust/src'
+let g:rustfmt_autosave = 1
 
-" Python folding
-" mkdir -p ~/.vim/ftplugin
-" wget -O ~/.vim/ftplugin/python_editing.vim http://www.vim.org/scripts/download_script.php?src_id=5492
-set nofoldenable
+" Python
+let g:ycm_path_to_python_interpreter = substitute( system('which python'), '\n', '', '' )
 
-" Settings for vim-django
-if !has("python")
-    call add(g:pathogen_disabled, 'vim-django')
-endif
+
+
+" Keybindings
+" -----------
+
+" Rebind <Leader> key
+let mapleader = ","
 
 " Keybindings for plugin toggle
-nmap <F6> :NERDTreeToggle<cr>
-nmap <F7> :IndentGuidesToggle<cr>
+nmap <F6> :NERDTreeToggle<CR>
+nmap <F7> :IndentGuidesToggle<CR>
 nmap <F8> :TagbarToggle<CR>
-
-" Exuberant Ctags path
-let g:tagbar_ctags_bin='~/bin/ctags'
 
 " Bash-like home/end key mappings
 nmap <C-A> <Home>
@@ -250,14 +212,14 @@ vmap <C-E> <End>
 
 " Bind Ctrl+<movement> keys to move around the windows, instead of using
 " Ctrl+w + <movement>
-map <c-j> <c-w>j
-map <c-k> <c-w>k
-map <c-l> <c-w>l
-map <c-h> <c-w>h
+" nnoremap <C-J> <C-W><C-J>
+" nnoremap <C-K> <C-W><C-K>
+" nnoremap <C-L> <C-W><C-L>
+" nnoremap <C-H> <C-W><C-H>
 
 " Easier moving between tabs
-map <Leader>n <esc>:tabprevious<CR>
-map <Leader>m <esc>:tabnext<CR>
+map <Leader>p <esc>:tabprevious<CR>
+map <Leader>n <esc>:tabnext<CR>
 nnoremap <A-1> 1gt
 nnoremap <A-2> 2gt
 nnoremap <A-3> 3gt
@@ -268,6 +230,15 @@ nnoremap <A-7> 7gt
 nnoremap <A-8> 8gt
 nnoremap <A-9> 9gt
 nnoremap <A-0> 10gt
+
+" Easier switching between buffers
+nnoremap <silent> <C-Right> :bn<CR>
+nnoremap <silent> <C-Left> :bp<CR>
+nnoremap <silent> <C-J> :bn<CR>
+nnoremap <silent> <C-k> :bp<CR>
+
+" <Leader>l redraws the screen and remove any search highlighting
+nnoremap <silent> <Leader>l :nohl<CR>
 
 " Use Enter for inserting a line after the current line without enter
 " the insert mode
@@ -282,9 +253,53 @@ vnoremap <Leader>s :sort<CR>
 vnoremap < <gv  " better indentation
 vnoremap > >gv  " better indentation
 
+" Syntastic toggle errors window
+nnoremap <silent> <C-e> :<C-u>call ToggleErrors()<CR>
+
+function! ToggleErrors()
+    let old_last_winnr = winnr('$')
+    lclose
+    if old_last_winnr == winnr('$')
+        " Nothing was closed, open syntastic error location panel
+        Errors
+    endif
+endfunction
+
+" YouCompleteMe
+nnoremap <Leader>gd :YcmCompleter GetDoc<CR>
+nnoremap <Leader>gD :YcmCompleter GoToDefinition<CR>
+nnoremap <Leader>gr :YcmCompleter GoToReferences<CR>
+
+" ALE
+nnoremap <silent> <leader>al :ALELint<CR>
+nnoremap <silent> <leader>aj :ALENext<CR>
+nnoremap <silent> <leader>ak :ALEPrevious<CR>
+nnoremap <silent> <leader>at :ALEToggle<CR>
+
+" Linter
+" ------
+
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_save = 0
+let g:ale_lint_on_enter = 0
+let g:ale_list_window_size = 5
+let g:ale_rust_cargo_use_check = 1
+let g:ale_rust_cargo_check_all_targets = 1
+let g:ale_rust_cargo_check_tests = 1
+let g:ale_linters = {
+    \ 'python': ['flake8', 'pylint'],
+    \ 'rust': ['cargo', 'rls'],
+    \ }
+
+
 " Theme/Colors
+" ------------
+
 set t_Co=256 " terminal has 256 colors
 try
+    syntax enable
+    set background=dark " for the dark version
+    " colorscheme one
     colorscheme onedark
 catch /^Vim\%((\a\+)\)\=:E185/
     " Use default
@@ -296,8 +311,6 @@ call matchadd('ColorColumn', '\%80v', 100)
 
  " Graphical options
 if has("gui_running")
-    set guifont=Source\ Code\ Pro\ for\ Powerline:h13
-
     " Remove toolbar, scrollbars, etc.
     set guioptions-=T
     set guioptions-=r

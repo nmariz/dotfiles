@@ -21,32 +21,49 @@ export ZSH_THEME="nmariz"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git)
+plugins=(
+  git
+  pyenv
+)
 
 source $ZSH/oh-my-zsh.sh
 
 # Customize $PATH
 export PATH=$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:/opt/local/bin:$PATH
 
+# Java
+JAVA_HOME=/usr/local/java/jdk
+PATH=$PATH:$JAVA_HOME/bin
+export JAVA_HOME
+
+# Golang
+export PATH=$PATH:$HOME/go/bin:/usr/local/go/bin
+
+# Rust
+export PATH=$PATH:$HOME/.cargo/bin
+
 # Editor
 export EDITOR=vim
+export ALTERNATE_EDITOR="emacs -nw"
 
 # Aliases
+alias e='emacsclient -c -n'
+alias et='emacsclient -c -t'
 alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
 alias ll='ls -lha'
+alias rm_pyc='find . -name \*.pyc -delete'
 alias restart_force_check='sudo touch /forcefsck && sudo reboot'
 manage() { python manage.py $* --settings=settings_debug; }
 
 # Pyenv
-if [ -x "$(command -v pyenv)" ]; then
-    export PATH="$HOME/.pyenv/bin:$PATH"
+if [ -x "$(command -v ~/.pyenv/bin/pyenv)" ]; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
     eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
 fi
-
-+# ConnectIQ
-+export PATH="$HOME/bin/connectiq-sdk/bin:$PATH"
 
 # Disable auto title in Tmuxinator
 export DISABLE_AUTO_TITLE=true
@@ -55,10 +72,7 @@ export DISABLE_AUTO_TITLE=true
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-# FLAGS
-export MACOSX_DEPLOYMENT_TARGET=10.11
-export ARCHFLAGS="-arch x86_64"
-export CFLAGS="-Os -arch x86_64"
-export PG_CPPFLAGS="-arch x86_64"
-export SHLIB_LINK="-arch x86_64"
-export LDFLAGS="-arch x86_64"
+# Neofetch
+if [ -x "$(command -v screenfetch)" ]; then
+    screenfetch
+fi
