@@ -29,7 +29,7 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 # Customize $PATH
-export PATH=$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:/opt/local/bin:$PATH
+export PATH=$HOME/bin:$HOME/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:/opt/local/bin:$PATH
 
 # Java
 JAVA_HOME=/usr/local/java/jdk
@@ -53,6 +53,8 @@ alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
 alias ll='ls -lha'
+alias grep='grep --color=always -n'
+alias rg='rg --color=always -n'
 alias rm_pyc='find . -name \*.pyc -delete'
 alias restart_force_check='sudo touch /forcefsck && sudo reboot'
 manage() { python manage.py $* --settings=settings_debug; }

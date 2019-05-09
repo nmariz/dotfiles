@@ -29,6 +29,6 @@ python_version() {
 }
 
 setopt prompt_subst
-PROMPT='%{$fg_bold[green]%}%n@%m%{$reset_color%} %{$fg_bold[blue]%}%~%{$reset_color%}$(python_version)$(ssh_connection) $(git_prompt_info)%{$reset_color%}%B
+PROMPT='%{$fg_bold[green]%}%n@%m%{$reset_color%} %{$fg_bold[blue]%}%~%{$reset_color%} %{$fg[cyan]%}[%D{%H:%M:%S}]$(ssh_connection) $(git_prompt_info)%{$reset_color%}%B
 $%b '
 RPS1="%(?..%{$fg_bold[red]%}%? ↵%{$reset_color%})"
