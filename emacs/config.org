@@ -281,6 +281,12 @@ Improved undo system. Use C-x u
       (setq beacon-color "#c0a9ec")))
 #+END_SRC
 
+** Web browsing
+
+#+BEGIN_SRC emacs-lisp
+  (setq browse-url-browser-function 'browse-url-xdg-open)
+#+END_SRC
+
 * Navigation
 
 ** ibuffer
