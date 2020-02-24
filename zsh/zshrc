@@ -24,6 +24,7 @@ export ZSH_THEME="nmariz"
 plugins=(
   git
   pyenv
+  extract
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -42,6 +43,9 @@ export PATH=$PATH:$HOME/go/bin:/usr/local/go/bin
 # Rust
 export PATH=$PATH:$HOME/.cargo/bin
 
+# rustup component add rust-src
+export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+
 # Editor
 export EDITOR=vim
 export ALTERNATE_EDITOR="emacs -nw"
@@ -53,10 +57,13 @@ alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
 alias ll='ls -lha'
+alias open='xdg-open'
 alias grep='grep --color=always -n'
 alias rg='rg --color=always -n'
 alias rm_pyc='find . -name \*.pyc -delete'
 alias restart_force_check='sudo touch /forcefsck && sudo reboot'
+alias dud='du -hs * | sort -rh | head -10'
+alias git_pull_folders='ls | xargs -I{} git -C {} pull'
 manage() { python manage.py $* --settings=settings_debug; }
 
 # Pyenv
@@ -82,3 +89,7 @@ fi
 # Command-line fuzzy finder
 # https://github.com/junegunn/fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+
+# Alacritty
+fpath+=${ZDOTDIR:-~}/.zsh_functions

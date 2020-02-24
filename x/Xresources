@@ -1,9 +1,9 @@
 ! https://unix.stackexchange.com/questions/267885/how-do-i-scale-i3-window-manager-for-my-hidpi-display
 !
 ! DPI for laptop monitor
-! Xft.dpi: 96
+Xft.dpi: 96
 ! DPI for 27" 4K monitor
-Xft.dpi: 140
+! Xft.dpi: 140
 Xft.autohint: 0
 Xft.lcdfilter:  lcddefault
 Xft.hintstyle:  hintfull

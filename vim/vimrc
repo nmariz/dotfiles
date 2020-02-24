@@ -12,7 +12,6 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'davidhalter/jedi-vim'
-Plugin 'ervandew/supertab' " ???
 Plugin 'geoffharcourt/one-dark.vim'
 Plugin 'itchyny/lightline.vim'
 Plugin 'itchyny/vim-gitbranch'
@@ -24,8 +23,14 @@ Plugin 'rust-lang/rust.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-markdown'
-Plugin 'Valloric/YouCompleteMe'
 Plugin 'w0rp/ale'
+
+if has('nvim')
+    Plugin 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    Plugin 'deoplete-plugins/deoplete-jedi'
+    Plugin 'sebastianmarkow/deoplete-rust'
+endif
+
 " All of your Plugins must be added before the following line
 " To install the plugins, launch vim and run :PluginInstall
 " Or from command line: vim +PluginInstall +qall
@@ -55,7 +60,9 @@ set encoding=utf-8 " set the default file encoding to UTF-8:
 autocmd! bufwritepost .vimrc source %
 
 " Security
-set cm=blowfish2 " set cryptmethod to blowfish2
+if !has('nvim')
+    set cm=blowfish2 " set cryptmethod to blowfish2
+endif
 set viminfo= " the viminfo file is not encrypted, and thus should not be used
 
 " Better copy & paste
@@ -117,6 +124,8 @@ set noswapfile
 " Set updatetime
 set ttimeoutlen=0
 
+" Close the preview window after completion is done
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | silent! pclose | endif
 
 " Plugins settings
 " ----------------
@@ -133,9 +142,9 @@ let g:lightline.component_function = { 'gitbranch': 'gitbranch#name' }
 let g:lightline.component_function = { 'filename': 'LightlineFilename' }
 
 function! LightlineFilename()
-  let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
-  let modified = &modified ? ' +' : ''
-  return filename . modified
+    let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+    let modified = &modified ? ' +' : ''
+    return filename . modified
 endfunction
 
 " Settings for NERDTree
@@ -157,38 +166,16 @@ set wildignore+=*/coverage/*
 " Settings for GitGutter
 autocmd BufWritePost * GitGutter
 
-" Settings for YouCompleteMe
+" Settings for Deoplete
+if has('nvim')
+    let g:deoplete#enable_at_startup = 1
+endif
 
-" General
-let g:ycm_auto_trigger = 1
-let g:ycm_min_num_of_chars_for_completion = 2
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_autoclose_preview_window_after_insertion = 0
-let g:ycm_filetype_blacklist = {}
-let g:ycm_semantic_triggers = {
-    \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
-    \ 'cs,lua,javascript,rust': ['re!\w{2}'],
-    \ }
-let g:ycm_filetype_blacklist = {
-    \ 'tagbar' : 1,
-    \ 'nerdtree' : 1,
-    \ 'markdown' : 1,
-    \ 'unite' : 1,
-    \ 'text' : 1,
-    \ 'csv' : 1,
-    \ }
+" Disable autocompletion, because we use deoplete for completion
+let g:jedi#completions_enabled = 0
 
-" Rust
-" Installation instructions:
-"   $ cd ~/dev/github.com/ && git clone https://github.com/rust-lang/rust.git -b stable
-"   $ cd ~/.vim/bundle/YouCompleteMe && ./install.py --rust-completer && ./install.py --racer-completer
-"   $ rustup component add rustfmt
-let g:ycm_rust_src_path='~/dev/github.com/rust/src'
-let g:rustfmt_autosave = 1
-
-" Python
-let g:ycm_path_to_python_interpreter = substitute( system('which python'), '\n', '', '' )
-
+" Open the go-to function in split, not another buffer
+" let g:jedi#use_splits_not_buffers = "right"
 
 
 " Keybindings
@@ -238,11 +225,6 @@ vnoremap <Leader>s :sort<CR>
 vnoremap < <gv  " better indentation
 vnoremap > >gv  " better indentation
 
-" YouCompleteMe
-nnoremap <Leader>gd :YcmCompleter GetDoc<CR>
-nnoremap <Leader>gD :YcmCompleter GoToDefinition<CR>
-nnoremap <Leader>gr :YcmCompleter GoToReferences<CR>
-
 " ALE
 nnoremap <silent> <leader>al :ALELint<CR>
 nnoremap <silent> <leader>aj :ALENext<CR>
@@ -253,7 +235,7 @@ nnoremap <silent> <leader>at :ALEToggle<CR>
 " ------
 
 let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_save = 0
+let g:ale_lint_on_save = 1
 let g:ale_lint_on_enter = 0
 let g:ale_list_window_size = 5
 let g:ale_rust_cargo_use_check = 1
@@ -263,6 +245,21 @@ let g:ale_linters = {
     \ 'python': ['flake8', 'pylint'],
     \ 'rust': ['cargo', 'rls'],
     \ }
+
+" Deoplete
+"
+" Installation instructions for Python and Rust:
+"   $ pip install pynvim jedi flake8 pylint
+"   $ cargo install racer
+" Rust nightly is required:
+"   $ rustup toolchain add nightly
+"   $ rustup default nightly
+if has('nvim')
+    let g:deoplete#enable_at_startup = 1
+    let g:deoplete#sources#jedi#show_docstring = 0
+    let g:deoplete#sources#rust#racer_binary = expand('$HOME/.cargo/bin/racer')
+    let g:deoplete#sources#rust#rust_source_path = expand('$RUST_SRC_PATH')
+endif
 
 
 " Theme/Colors

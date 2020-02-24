@@ -23,6 +23,7 @@ help:
 	@echo "   make all                         install everything       "
 	@echo "   make install_zsh                 install zsh config       "
 	@echo "   make install_vim                 install vim config       "
+	@echo "   make install_nvim                install neovim config    "
 	@echo "   make install_emacs               install emacs config     "
 	@echo "   make install_tmux                install tmux config      "
 	@echo "   make install_git                 install git config       "
@@ -60,6 +61,16 @@ clean_vim:
 	@echo "Removing old 'vim' config..."
 	rm -rf ${TARGET}/.vimrc
 	rm -rf ${TARGET}/.vim
+
+install_nvim: clean_nvim
+	mkdir -p ${TARGET}/.config/nvim
+	ln -s ${DOTFILES}/nvim/init.vim ${TARGET}/.config/nvim
+	@echo "Installing Neovim plugins..."
+	nvim +PluginInstall +qall
+
+clean_nvim:
+	@echo "Removing old 'Neovim' config..."
+	rm -rf ${TARGET}/.config/nvim
 
 install_emacs: clean_emacs
 	mkdir -p ${TARGET}/.emacs.d
