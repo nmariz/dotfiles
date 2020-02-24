@@ -254,6 +254,8 @@ let g:ale_linters = {
 " Rust nightly is required:
 "   $ rustup toolchain add nightly
 "   $ rustup default nightly
+"   $ rustup component add rust-src
+"   $ cargo install racer
 if has('nvim')
     let g:deoplete#enable_at_startup = 1
     let g:deoplete#sources#jedi#show_docstring = 0

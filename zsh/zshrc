@@ -43,7 +43,7 @@ export PATH=$PATH:$HOME/go/bin:/usr/local/go/bin
 # Rust
 export PATH=$PATH:$HOME/.cargo/bin
 
-# rustup component add rust-src
+# Rust source path
 export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
 
 # Editor
@@ -89,7 +89,6 @@ fi
 # Command-line fuzzy finder
 # https://github.com/junegunn/fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 
 # Alacritty
 fpath+=${ZDOTDIR:-~}/.zsh_functions
