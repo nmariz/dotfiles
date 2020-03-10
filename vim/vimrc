@@ -23,6 +23,7 @@ Plugin 'rust-lang/rust.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-markdown'
+Plugin 'tpope/vim-surround'
 Plugin 'w0rp/ale'
 
 if has('nvim')
@@ -166,6 +167,14 @@ set wildignore+=*/coverage/*
 " Settings for GitGutter
 autocmd BufWritePost * GitGutter
 
+" Settings for vim-better-whitespace
+let g:better_whitespace_enabled=1
+let g:show_spaces_that_precede_tabs=1
+
+" I'm sorry, but I'm a spaces type of person!
+set list
+set listchars=tab:T>
+
 " Settings for Deoplete
 if has('nvim')
     let g:deoplete#enable_at_startup = 1
@@ -241,6 +250,7 @@ let g:ale_list_window_size = 5
 let g:ale_rust_cargo_use_check = 1
 let g:ale_rust_cargo_check_all_targets = 1
 let g:ale_rust_cargo_check_tests = 1
+
 let g:ale_linters = {
     \ 'python': ['flake8', 'pylint'],
     \ 'rust': ['cargo', 'rls'],

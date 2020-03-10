@@ -51,6 +51,7 @@ export EDITOR=vim
 export ALTERNATE_EDITOR="emacs -nw"
 
 # Aliases
+alias v='nvim'
 alias e='emacsclient -c -n'
 alias et='emacsclient -c -t'
 alias rm='rm -i'
