@@ -10,20 +10,22 @@ Plugin 'VundleVim/Vundle.vim'
 
 " Plugins
 Plugin 'airblade/vim-gitgutter'
+Plugin 'cespare/vim-toml'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'davidhalter/jedi-vim'
 Plugin 'geoffharcourt/one-dark.vim'
+Plugin 'godlygeek/tabular'
 Plugin 'itchyny/lightline.vim'
 Plugin 'itchyny/vim-gitbranch'
 Plugin 'majutsushi/tagbar'
 Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'ntpeters/vim-better-whitespace'
+Plugin 'plasticboy/vim-markdown'
 Plugin 'rakr/vim-one'
 Plugin 'rust-lang/rust.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-markdown'
-Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-surround', { 'branch': 'dev' }
 Plugin 'w0rp/ale'
 
 if has('nvim')
@@ -183,6 +185,10 @@ endif
 " Disable autocompletion, because we use deoplete for completion
 let g:jedi#completions_enabled = 0
 
+" Settings for vim-markdown
+let g:vim_markdown_conceal = 0
+let g:vim_markdown_conceal_code_blocks = 0
+
 " Open the go-to function in split, not another buffer
 " let g:jedi#use_splits_not_buffers = "right"
 
@@ -252,7 +258,7 @@ let g:ale_rust_cargo_check_all_targets = 1
 let g:ale_rust_cargo_check_tests = 1
 
 let g:ale_linters = {
-    \ 'python': ['flake8', 'pylint'],
+    \ 'python': ['flake8', 'pylint', 'pydocstyle'],
     \ 'rust': ['cargo', 'rls'],
     \ }
 
