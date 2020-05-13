@@ -161,25 +161,18 @@ Add ~:tangle no~ to the end of the begin_src lines – see the init.el section f
 ** Theme and fonts
 #+BEGIN_SRC emacs-lisp
   (if (display-graphic-p)
-      (use-package arjen-grey-theme
+      (use-package dracula-theme
         :ensure t
-        :config (load-theme 'arjen-grey t)))
+        :config (load-theme 'dracula t)))
   (unless (display-graphic-p)
     (load-theme 'wombat t))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  ;; (if (or (eq system-type 'darwin)(eq system-type 'gnu/linux))
-  ;;     (set-face-attribute 'default nil
-  ;;                         :family "Source Code Pro for Powerline"
-  ;;                         :height 110
-  ;;                         :weight 'normal
-  ;;                         :width 'normal))
-
   (if (or (eq system-type 'darwin)(eq system-type 'gnu/linux))
       (set-face-attribute 'default nil
-                          :family "Fira Mono for Powerline"
-                          :height 100
+                          :family "JetBrains Mono"
+                          :height 110
                           :weight 'normal
                           :width 'normal))
 #+END_SRC
@@ -321,7 +314,7 @@ Emacs package for selecting a window to switch to.
 #+END_SRC
 
 ** Swiper
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (use-package swiper
     :ensure try
     :config
@@ -444,7 +437,6 @@ Emacs package for selecting a window to switch to.
                     ("HOLD" :foreground "magenta" :weight bold)
                     ("IN REVIEW" :foreground "orange" :weight bold)
                     ("CANCELLED" :foreground "forest green" :weight bold)
-                    ("PHONE" :foreground "forest green" :weight bold)
                     ("DOCUMENTING" :foreground "magenta" :weight bold))))
       (setq org-columns-default-format "%40ITEM %TODO %5Effort(Effort){:} %6CLOCKSUM")
       (setq org-clock-in-switch-to-state "STARTED")
@@ -463,14 +455,6 @@ Emacs package for selecting a window to switch to.
    'org-babel-load-languages
    '((python . t)
      (ditaa . t)))
-
-  (when (window-system)
-    (custom-set-faces
-     '(org-document-title ((t :height 1.5 :weight bold)))
-     '(org-level-1 ((t :height 1.4 :weight bold)))
-     '(org-level-2 ((t :height 1.1 :weight bold)))
-     '(org-level-3 ((t :height 1.0 :weight bold)))
-     '(org-level-4 ((t :height 1.0 :weight bold)))))
 #+END_SRC
 
 ** Org bullets

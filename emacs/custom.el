@@ -7,7 +7,7 @@
  '(js2-strict-missing-semi-warning nil)
  '(package-selected-packages
    (quote
-    (imenu-list imenu-anywhere tern js2-mode go-autocomplete go-playground elpy yasnippet git-gutter magit smartparens ox-gfm dashboard org-ac markdown-mode neotree try counsel ivy ace-window beacon undo-tree fill-column-indicator expand-region hungry-delete diminish powerline use-package))))
+    (modus-vivendi-theme solarized-theme wombat-theme spacemacs-theme color-theme-leuven org-bullets imenu-list imenu-anywhere tern js2-mode go-autocomplete go-playground elpy yasnippet git-gutter magit smartparens ox-gfm dashboard org-ac markdown-mode neotree try counsel ivy ace-window beacon undo-tree fill-column-indicator expand-region hungry-delete diminish powerline use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -23,4 +23,5 @@
  '(org-level-1 ((t :height 1.4 :weight bold)))
  '(org-level-2 ((t :height 1.1 :weight bold)))
  '(org-level-3 ((t :height 1.0 :weight bold)))
- '(org-level-4 ((t :height 1.0 :weight bold))))
+ '(org-level-4 ((t :height 1.0 :weight bold)))
+ '(org-level-5 ((t :height 1.0 :weight bold))))
