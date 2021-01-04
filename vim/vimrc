@@ -11,12 +11,14 @@ Plugin 'VundleVim/Vundle.vim'
 " Plugins
 Plugin 'airblade/vim-gitgutter'
 Plugin 'cespare/vim-toml'
-Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'davidhalter/jedi-vim'
 Plugin 'geoffharcourt/one-dark.vim'
 Plugin 'godlygeek/tabular'
 Plugin 'itchyny/lightline.vim'
 Plugin 'itchyny/vim-gitbranch'
+Plugin 'jiangmiao/auto-pairs'
+Plugin 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plugin 'junegunn/fzf.vim'
 Plugin 'majutsushi/tagbar'
 Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'ntpeters/vim-better-whitespace'
@@ -160,11 +162,8 @@ let NERDTreeShowBookmarks = 1
 let NERDTreeShowHidden = 0 " don't show hidden files, use shift-i to toggle
 let NERDTreeWinPos = "left"
 
-" Settings for ctrlp.vim
-let g:ctrlp_max_height = 25
-set wildignore+=*.pyc
-set wildignore+=*_build/*
-set wildignore+=*/coverage/*
+" Settings for fzf
+let g:fzf_buffers_jump = 1
 
 " Settings for GitGutter
 autocmd BufWritePost * GitGutter
@@ -246,6 +245,18 @@ nnoremap <silent> <leader>aj :ALENext<CR>
 nnoremap <silent> <leader>ak :ALEPrevious<CR>
 nnoremap <silent> <leader>at :ALEToggle<CR>
 
+" fzf
+if executable('fzf')
+    nnoremap <silent> <C-p> :FZF -m<cr>
+    nnoremap <silent> <Leader>b :Buffers<CR>
+endif
+
+" ripgrep
+if executable('rg')
+    let g:rg_command = 'rg --vimgrep -S'
+    nnoremap <silent> <Leader>f :Rg<CR>
+endif
+
 " Linter
 " ------
 
@@ -283,9 +294,14 @@ endif
 " Theme/Colors
 " ------------
 
+syntax enable
 set t_Co=256 " terminal has 256 colors
+
+if (has("termguicolors"))
+    set termguicolors
+endif
+
 try
-    syntax enable
     set background=dark " for the dark version
     " colorscheme one
     colorscheme onedark
