@@ -63,10 +63,8 @@ clean_vim:
 	rm -rf ${TARGET}/.vim
 
 install_nvim: clean_nvim
-	mkdir -p ${TARGET}/.config/nvim
-	ln -s ${DOTFILES}/nvim/init.vim ${TARGET}/.config/nvim
-	@echo "Installing Neovim plugins..."
-	nvim +PluginInstall +qall
+	ln -s ${DOTFILES}/nvim ${TARGET}/.config/nvim
+	@echo "Run 'PackerInstall' in nvim..."
 
 clean_nvim:
 	@echo "Removing old 'Neovim' config..."
