@@ -50,3 +50,15 @@ map("n", "<leader>fb", "<CMD>lua require('telescope.builtin').buffers()<CR>")
 map("n", "<leader>fh", "<CMD>lua require('telescope.builtin').help_tags()<CR>")
 map("n", "<leader>fs", "<CMD>lua require('telescope.builtin').git_status()<CR>")
 map("n", "<leader>fe", "<CMD>lua require('telescope.builtin').symbols()<CR>")
+
+-- psf/black
+map("n", "<leader>pb", ":Black<CR>")
+
+-- fisadev/vim-isort
+map("n", "<leader>ps", ":Isort<CR>")
+
+-- rust-lang/rust.vim
+map("n", "<leader>cr", ":Crun<CR>")
+map("n", "<leader>cc", ":Ccheck<CR>")
+map("n", "<leader>ct", ":Ctest<CR>")
+

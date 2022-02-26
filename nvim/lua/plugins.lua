@@ -66,6 +66,9 @@ require "compe".setup {
 -- ray-x/lsp_signature.nvim
 require "lsp_signature".setup()
 
+-- rust-lang/rust.vim
+vim.g.rustfmt_autosave = true
+
 -- ntpeters/vim-better-whitespace
 vim.g.better_whitespace_enabled = true
 vim.g.show_spaces_that_precede_tabs = true
