@@ -1,7 +1,3 @@
--- Aliases
-local opt = vim.opt -- global
-local g = vim.g -- global for let options
-
 -- Map helper
 local function map(mode, lhs, rhs, opts)
     local options = {noremap = true}
@@ -12,7 +8,8 @@ local function map(mode, lhs, rhs, opts)
 end
 
 -- Leader key
-g.mapleader = ","
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 -- Easier moving between tabs
 map("n", "<Leader>p", "<esc>:tabprevious<CR>")
@@ -38,27 +35,18 @@ map("v", "<Leader>s", ":sort<CR>")
 map("v", "<", "<gv") -- better indentation
 map("v", ">", ">gv") -- better indentation
 
-map("n", "<leader>b", ":buffers<cr>:b<space>")
+map("n", "<Leader>b", ":buffers<cr>:b<space>")
 
 -- Map sort function to a key
 map("v", "<Leader>s", ":sort<CR>")
 
--- nvim-telescope/telescope.nvim
-map("n", "<leader>ff", "<CMD>lua require('telescope.builtin').find_files()<CR>")
-map("n", "<leader>fg", "<CMD>lua require('telescope.builtin').live_grep()<CR>")
-map("n", "<leader>fb", "<CMD>lua require('telescope.builtin').buffers()<CR>")
-map("n", "<leader>fh", "<CMD>lua require('telescope.builtin').help_tags()<CR>")
-map("n", "<leader>fs", "<CMD>lua require('telescope.builtin').git_status()<CR>")
-map("n", "<leader>fe", "<CMD>lua require('telescope.builtin').symbols()<CR>")
-
 -- psf/black
-map("n", "<leader>pb", ":Black<CR>")
+map("n", "<Leader>pb", ":Black<CR>")
 
 -- fisadev/vim-isort
-map("n", "<leader>ps", ":Isort<CR>")
+map("n", "<Leader>ps", ":Isort<CR>")
 
 -- rust-lang/rust.vim
-map("n", "<leader>cr", ":Crun<CR>")
-map("n", "<leader>cc", ":Ccheck<CR>")
-map("n", "<leader>ct", ":Ctest<CR>")
-
+map("n", "<Leader>cr", ":Crun<CR>")
+map("n", "<Leader>cc", ":Ccheck<CR>")
+map("n", "<Leader>ct", ":Ctest<CR>")

@@ -20,33 +20,75 @@ vim.api.nvim_exec(
 local use = require("packer").use
 require("packer").startup(
     function()
-        use "airblade/vim-gitgutter"
+        -- Package manager
+        use {"wbthomason/packer.nvim", opt = true}
+
+        -- LSP Configuration & Plugins
+        use {
+            "neovim/nvim-lspconfig",
+            requires = {
+                -- Automatically install LSPs to stdpath for neovim
+                "williamboman/mason.nvim",
+                "williamboman/mason-lspconfig.nvim",
+
+                -- Useful status updates for LSP
+                "j-hui/fidget.nvim",
+
+                -- Additional lua configuration, makes nvim stuff amazing
+                "folke/neodev.nvim",
+            },
+        }
+
+        -- Autocompletion
+        use {
+            "hrsh7th/nvim-cmp",
+            requires = {
+                "hrsh7th/cmp-nvim-lsp",
+                "L3MON4D3/LuaSnip",
+                "saadparwaiz1/cmp_luasnip"
+            },
+        }
+
+        -- Telescope
+        use {
+            "nvim-telescope/telescope.nvim",
+            requires = {
+                {"nvim-lua/popup.nvim"},
+                {"nvim-lua/plenary.nvim"},
+                {"nvim-telescope/telescope-symbols.nvim"}
+            }
+        }
+
+        -- Highlight, edit, and navigate code
+        use {
+            "nvim-treesitter/nvim-treesitter",
+            run = function()
+                pcall(require("nvim-treesitter.install").update { with_sync = true })
+            end,
+        }
+
+        -- Additional text objects via treesitter
+        use {
+            "nvim-treesitter/nvim-treesitter-textobjects",
+            after = "nvim-treesitter",
+        }
+
+        -- Other
         use "cespare/vim-toml"
-        use "fisadev/vim-isort" -- install: pip install isort
+        use "fisadev/vim-isort"
         use "geoffharcourt/one-dark.vim"
-        use "hrsh7th/nvim-compe"
         use "jiangmiao/auto-pairs"
-        use "kabouzeid/nvim-lspinstall"
-        use "majutsushi/tagbar"
-        use "neovim/nvim-lspconfig"
+        use "kyazdani42/nvim-web-devicons"
+        use "lewis6991/gitsigns.nvim"
+        use "marko-cerovac/material.nvim"
         use "ntpeters/vim-better-whitespace"
-        use "nvim-lua/plenary.nvim"
-        use "nvim-lua/popup.nvim"
         use "nvim-lualine/lualine.nvim"
-        use "nvim-telescope/telescope-symbols.nvim"
-        use "psf/black" -- install: pip install black
+        use "psf/black"
         use "rust-lang/rust.vim"
         use "tpope/vim-commentary"
-        use 'marko-cerovac/material.nvim'
-        use {"kyazdani42/nvim-web-devicons"}
-        use {"nvim-telescope/telescope.nvim", requires = {{"nvim-lua/popup.nvim"}, {"nvim-lua/plenary.nvim"}}}
-        use {"nvim-treesitter/nvim-treesitter", run = ":TSUpdate"}
-        use {"wbthomason/packer.nvim", opt = true}
-        use {"ray-x/lsp_signature.nvim"}
     end
 )
 
 require("keys")
 require("options")
-require("lsp")
 require("plugins")
