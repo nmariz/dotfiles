@@ -74,7 +74,7 @@ vim.cmd [[colorscheme material]]
 
 -- ColorColumn
 vim.api.nvim_command("highlight ColorColumn ctermbg=magenta ctermfg=white guibg=magenta guifg=white")
-vim.api.nvim_command("call matchadd('ColorColumn', '\\%80v', 100)")
+vim.api.nvim_command("call matchadd('ColorColumn', '\\%89v', 100)")
 
 -- Highlight on yank
 local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })

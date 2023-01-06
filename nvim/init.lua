@@ -76,7 +76,6 @@ require("packer").startup(
         -- Other
         use "cespare/vim-toml"
         use "fisadev/vim-isort"
-        use "geoffharcourt/one-dark.vim"
         use "jiangmiao/auto-pairs"
         use "kyazdani42/nvim-web-devicons"
         use "lewis6991/gitsigns.nvim"
